@@ -34,7 +34,10 @@ A fix is any change to production code that adds complexity. By complexity, I me
 
 ## When to Use This
 
-**Start with traditional TDD** (write test → red → write fix → green). It's the fastest path when it works.
+
+Don't use this if the test is obvious. If you already know exactly what the test code should look like, using these toggles will just feel like busywork.
+
+Use this when you are staring at a blank screen. This tool is specifically for the moments when you don't know what test to write.
 
 **Use this technique when you get stuck:**
 - You don't know what API makes sense yet
