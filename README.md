@@ -42,7 +42,15 @@ Often, you cannot see the 'minimal step' until you have drafted the full solutio
    - Minimal: the simplest (fewest steps and code paths) test/fix where you can still verify all 4 states
    - The "fix" is production code that requires a new test to verify it
 
-3. **Verify it through 4 states:**
+3. **Choose an activation mechanism**
+   - Decide how you are going to turn the fix and test off and on.
+   - This can be
+     - Commenting out the code to turn it off, uncommenting it to turn it on
+     - Using a preprocessor flag that guards the change and turning it on or off
+     - Using a configuration option and turning it on or off.
+   - Use whatever approach makes sense to you.
+
+4. **Verify it through 4 states:**
    |                | **Test off**               | **Test on**                |
    |----------------|----------------------------|----------------------------|
    | **Fix off**    | **State I** (tests pass)   | **State III** (tests fail) |
@@ -66,7 +74,7 @@ Often, you cannot see the 'minimal step' until you have drafted the full solutio
    - State IV red → Your fix doesn't work, revise it
    - *Any revision means you must re-verify all states with the new test/fix pair*
 
-4. **Remove the scaffolding** (uncomment permanently, delete the flags)
+5. **Remove the scaffolding** (uncomment permanently, delete the flags)
     - If this requires any code changes, run the tests again to double-check.
 
 6. **Repeat** for the next test/fix pair
