@@ -94,8 +94,6 @@ You’re not abandoning TDD, you’re just allowing yourself a sketch phase, the
 
 6. **Repeat** for the next test/fix pair
 
-## Example 1: Single Location (Comments)
-
 ---
 
 ## Example 1: Single Location (The "Comment" Toggle)
