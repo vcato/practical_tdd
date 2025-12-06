@@ -29,6 +29,8 @@ Both cases add complexity to the production code that must be justified by a new
 - You're working with complex legacy code
 - You need to think through architecture first
 
+Often, you cannot see the 'minimal step' until you have drafted the full solution. Drafting allows you to solve the architectural puzzle holistically. The verification phase then forces you to decompose that solution into atomic, proven steps.
+
 ## The Technique
 
 1. Draft both pieces (in any order, any level of detail, ideally focusing on a single, cohesive unit of behavior or a small set of related changes)
