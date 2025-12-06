@@ -96,6 +96,125 @@ You’re not abandoning TDD, you’re just allowing yourself a sketch phase, the
 
 ## Example 1: Single Location (Comments)
 
+---
+
+## Example 1: Single Location (The "Comment" Toggle)
+
+The "Draft" phase is just writing code in comments. The "Verification" phase is just deleting the `#` to let the compiler see it.
+
+### 1. The Draft (Safe Mode)
+Write your implementation and test freely. Keep them commented out so they don't break the build yet.
+
+```python
+# Baseline: The code does not exist yet.
+#
+# def calculate_discount(price, is_member):
+#     if is_member:
+#         return price * 0.9
+#     return price
+#
+# def test_discount():
+#     assert calculate_discount(100, True) == 90
+```
+
+### 2. Verify: Watch it Fail (State III)
+Uncomment **only the test**. This proves the test fails (Red) and confirms you aren't getting a false positive.
+
+```diff
+  # def calculate_discount(price, is_member):
+  #     if is_member:
+  #         return price * 0.9
+  #     return price
+
+- # def test_discount():
++ def test_discount():
+- #     assert calculate_discount(100, True) == 90
++     assert calculate_discount(100, True) == 90
+```
+
+### 3. Verify: Watch it Pass (State IV)
+Uncomment **the fix**. This proves the code works (Green).
+
+```diff
+- # def calculate_discount(price, is_member):
++ def calculate_discount(price, is_member):
+- #     if is_member:
++     if is_member:
+- #         return price * 0.9
++         return price * 0.9
+- #     return price
++     return price
+
+  def test_discount():
+      assert calculate_discount(100, True) == 90
+```
+
+## Example 2: Multi-Location (The "Flag" Toggle)
+
+When your draft touches multiple files, comments are messy. Instead, use a temporary "Toggle Block" at the top of your file (or in a config).
+
+### 1. The Draft (Safe Mode)
+Write the code you *want* to have, guarded by a flag.
+
+```python
+# --- TEMPORARY SCAFFOLDING ---
+FIX_SILVER = False
+TEST_SILVER = False
+# -----------------------------
+
+# Location A: The Logic
+def get_tier(is_member):
+    if FIX_SILVER and is_member:
+        return "silver"
+    return None
+
+# Location B: The Test
+def test_tiers():
+    assert get_tier(False) is None
+    if TEST_SILVER:
+        assert get_tier(True) == "silver"
+```
+
+### 2. Verify: Watch it Fail (State III)
+Flip the **Test Switch** to `True`. The logic is still disabled, so the test must fail.
+
+```diff
+  # --- TEMPORARY SCAFFOLDING ---
+  FIX_SILVER = False
+- TEST_SILVER = False
++ TEST_SILVER = True
+  # -----------------------------
+```
+
+### 3. Verify: Watch it Pass (State IV)
+Flip the **Fix Switch** to `True`. Now the logic is live and the test passes.
+
+```diff
+  # --- TEMPORARY SCAFFOLDING ---
+- FIX_SILVER = False
++ FIX_SILVER = True
+  TEST_SILVER = True
+  # -----------------------------
+```
+
+### 4. Cleanup
+Delete the flags and the `if` guards. You are done.
+
+```python
+def get_tier(is_member):
+    if is_member:
+        return "silver"
+    return None
+
+def test_tiers():
+    assert get_tier(False) is None
+    assert get_tier(True) == "silver"
+```
+
+---
+
+
+
 (✓ indicates the state was verified by running tests)
 
 ```python
