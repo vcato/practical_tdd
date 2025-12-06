@@ -65,8 +65,9 @@ Both cases add complexity to the production code that must be justified by a new
    - *Any revision means you must re-verify all states with the new test/fix pair*
 
 4. **Remove the scaffolding** (uncomment permanently, delete the flags)
+    - If this requires any code changes, run the tests again to double-check.
 
-5. **Repeat** for the next test/fix pair
+6. **Repeat** for the next test/fix pair
 
 ## Example 1: Single Location (Comments)
 
