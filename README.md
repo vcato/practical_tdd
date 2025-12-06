@@ -41,6 +41,11 @@ Both cases add complexity to the production code that must be justified by a new
    - The "fix" is production code that requires a new test to verify it
 
 3. **Verify it through 4 states:**
+   |                | **Test off**              | **Test on**               |
+   |----------------|----------------------------|----------------------------|
+   | **Fix off**    | **State I** (baseline)     | **State II** (test fails) |
+   | **Fix on**     | **State III** (no side effects) | **State IV** (test passes) |
+
    - **Run all tests** for the module you're changing (not just the new test)
    - Use this same test scope for all 4 states
    - Verify by toggling on/off
@@ -58,9 +63,9 @@ Both cases add complexity to the production code that must be justified by a new
    - State IV red → Your fix doesn't work, revise it
    - *Any revision means you must re-verify all states with the new test/fix pair*
 
-4. **Remove the scaffolding** (uncomment permanently, delete the flags)
+5. **Remove the scaffolding** (uncomment permanently, delete the flags)
 
-5. **Repeat** for the next test/fix pair
+6. **Repeat** for the next test/fix pair
 
 ## Example 1: Single Location (Comments)
 
