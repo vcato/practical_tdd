@@ -1,5 +1,7 @@
 # TDD for People Who Think TDD is Impractical
 
+Get the confidence of TDD, even when the design is still unclear.
+
 ## A common complaint about TDD…
 
 A lot of people find TDD confusing or impractical:
