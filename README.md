@@ -49,7 +49,7 @@ You’re not abandoning TDD, you’re just allowing yourself a sketch phase, the
    - This can be
      - Commenting out the code to turn it off, uncommenting it to turn it on
      - Using a preprocessor flag that guards the change and turning it on or off
-     - Using a configuration option and turning it on or off.
+     - Using test framework options, like a "skip" flag for a test.
    - Use whatever approach makes sense to you.
 
 4. **Verify it through 4 states:**
