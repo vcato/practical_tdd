@@ -4,9 +4,9 @@
 
 A lot of people find TDD confusing or impractical:
 
-“How am I supposed to test something that doesn’t exist?”
-“How do I know what test to write when I haven’t figured out the design?”
-“If the design changes while I'm exploring, won’t that just break tests constantly?”
+    “How am I supposed to test something that doesn’t exist?”
+    “How do I know what test to write when I haven’t figured out the design?”
+    “If the design changes while I'm exploring, won’t that just break tests constantly?”
 
 This pattern is meant for that fuzzy phase — the part where you’re still figuring things out and the classic “write the test first” rule feels unrealistic.
 
