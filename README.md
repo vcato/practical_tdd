@@ -31,6 +31,8 @@ Both cases add complexity to the production code that must be justified by a new
 
 Often, you cannot see the 'minimal step' until you have drafted the full solution. Drafting allows you to solve the architectural puzzle holistically. The verification phase then forces you to decompose that solution into atomic, proven steps.
 
+You’re not abandoning TDD, you’re just allowing yourself a sketch phase, then forcing each piece of that sketch back through the classic “prove it fails, then make it pass” loop.
+
 ## The Technique
 
 1. Draft both pieces (in any order, any level of detail, ideally focusing on a single, cohesive unit of behavior or a small set of related changes)
