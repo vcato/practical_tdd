@@ -204,4 +204,3 @@ def test_tiered_discounts():
 - **No false confidence:** State III proves your test can actually fail
 - **Verified fixes:** State IV proves your fix actually works and doesn't break anything
 - **No waste:** You keep only tests that demonstrated they can catch real problems
-- **Safe refactoring:** The frozen pair principle ensures your verification is rigorous
