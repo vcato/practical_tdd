@@ -18,15 +18,12 @@ Before the technique makes sense, we need to name one thing clearly.
 
 What a “fix” means
 
-A fix is any change to production code that requires a new test to justify it.
-It might be repairing a bug, adding a behavior, or adjusting an existing one.
-If the change needs a new test, it counts as a fix.
+A fix is any change to production code that adds complexity. By complexity, I mean additional steps or additional code paths. It might be repairing a bug where we didn't handle an edge case before, or it might be adding new behavior to satisfy requirements. Either way, it is behavior that we had no existing test for. If we're starting from a baseline where all current complexity has been shown to be necessary through existing tests, then a fix is necessarily something that adds complexity.
 
-Both cases add complexity to the production code that must be justified by a new failing test. This technique maintains that discipline even when you draft both pieces first.
 
 **This technique does NOT apply to:**
-- **Requirement changes:** The definition of 'Correct' has changed. Treat the updates to the test and the code as a single atomic change. You can modify them in whatever order feels best.
-- **Refactoring:** Change code/test structure while keeping test expectations unchanged and green and not adding complexity.
+- **Changes to existing requirements:** The definition of 'Correct' has changed. In that case, treat the updates to the test and the code as a single atomic change. You can modify them in whatever order feels best to you.
+- **Refactoring:** You want to restructure the code to make it more maintainable without adding complexity. Tests should always be passing during these changes.
 
 ## When to Use This
 
