@@ -64,9 +64,9 @@ Both cases add complexity to the production code that must be justified by a new
    - State IV red → Your fix doesn't work, revise it
    - *Any revision means you must re-verify all states with the new test/fix pair*
 
-5. **Remove the scaffolding** (uncomment permanently, delete the flags)
+4. **Remove the scaffolding** (uncomment permanently, delete the flags)
 
-6. **Repeat** for the next test/fix pair
+5. **Repeat** for the next test/fix pair
 
 ## Example 1: Single Location (Comments)
 
