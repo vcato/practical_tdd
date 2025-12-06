@@ -37,7 +37,7 @@ Both cases add complexity to the production code that must be justified by a new
    - Think through the design. Revise. Explore. This is just sketching.
 
 2. **Pick one minimal test/fix pair** from your draft
-   - Minimal: the smallest test/fix where you can still verify all 4 states
+   - Minimal: the simplest (fewest steps and code paths) test/fix where you can still verify all 4 states
    - The "fix" is production code that requires a new test to verify it
 
 3. **Verify it through 4 states:**
