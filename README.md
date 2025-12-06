@@ -85,21 +85,48 @@ Both cases add complexity to the production code that must be justified by a new
 
 # First pair: non-member case
 # State I: Both off → Green ✓
+# State II: Test off, Fix on - Green ✓
+def test_discount():
+    pass
+#   assert calculate_discount(100, False) == 100
+#   assert calculate_discount(100, True) == 90
+def calculate_discount(price, is_member):
+    return price
 # State III: Test on, fix off → Red ✓
 def test_discount():
     assert calculate_discount(100, False) == 100
 #   assert calculate_discount(100, True) == 90
+# def calculate_discount(price, is_member):
+#     return price
 # State IV: Both on → Green ✓
+def test_discount():
+    assert calculate_discount(100, False) == 100
+#   assert calculate_discount(100, True) == 90
 def calculate_discount(price, is_member):
     return price
 
 # Second pair: member discount
 # State I: First pair working → Green ✓
+# State II: Test off, Fix on  → Green ✓
+def test_discount():
+    assert calculate_discount(100, False) == 100
+    # assert calculate_discount(100, True) == 90
+def calculate_discount(price, is_member):
+    if is_member:
+        return price * 0.9
+    return price
 # State III: New test on, new fix off → Red ✓
 def test_discount():
     assert calculate_discount(100, False) == 100
     assert calculate_discount(100, True) == 90
+def calculate_discount(price, is_member):
+#     if is_member:
+#         return price * 0.9
+    return price
 # State IV: Both on → Green ✓
+def test_discount():
+    assert calculate_discount(100, False) == 100
+    assert calculate_discount(100, True) == 90
 def calculate_discount(price, is_member):
     if is_member:
         return price * 0.9
