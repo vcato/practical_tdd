@@ -43,8 +43,8 @@ Both cases add complexity to the production code that must be justified by a new
 3. **Verify it through 4 states:**
    |                | **Test off**               | **Test on**                |
    |----------------|----------------------------|----------------------------|
-   | **Fix off**    | **State I** (tests pass)   | **State II** (tests fail)  |
-   | **Fix on**     | **State III** (tests pass) | **State IV** (tests pass)  |
+   | **Fix off**    | **State I** (tests pass)   | **State III** (tests fail) |
+   | **Fix on**     | **State II** (tests pass)  | **State IV** (tests pass)  |
 
    - **Run all tests** for the module you're changing (not just the new test)
    - Use this same test scope for all 4 states
