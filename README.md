@@ -1,6 +1,16 @@
-# TDD for People Who Think TDD is Impractical
+# Practical TDD: Draft First, Verify Later
 
-Get the confidence of TDD, even when the design is still unclear.
+**Stop staring at blank test files.**
+
+## The Problem
+
+Standard TDD demands you write a test before you write code. **But you cannot test a design that doesn't exist yet.**
+
+If you are exploring a new idea, you often don't know the class names, the method signatures, or how the data flows. Trying to write a test first in this state leads to paralysis or bad tests that you have to rewrite five times.
+
+## The Solution
+
+This pattern allows you to write the implementation first (Drafting) to figure out your design, then uses a simple toggle trick to reverse-engineer the safety of TDD.
 
 ## A common complaint about TDD…
 
