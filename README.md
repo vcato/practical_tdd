@@ -12,6 +12,11 @@ A lot of people find TDD confusing or impractical:
 
 This pattern is meant for that fuzzy phase — the part where you’re still figuring things out and the classic “write the test first” rule feels unrealistic.
 
+**The goal of this approach is simple:**
+to give you a clear boundary between code that is verified — code you’ve actually seen behave correctly — and code that is still just a sketch or experiment.
+Most of the friction around TDD comes from not knowing when it’s “safe” to commit to an idea.
+This pattern gives you a small, repeatable way to turn uncertain exploratory code into code you can trust.
+
 ## What "Fix" Means
 
 One small idea we need before we go further
