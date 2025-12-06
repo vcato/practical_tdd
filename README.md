@@ -30,7 +30,7 @@ A fix is any change to production code that adds complexity. By complexity, I me
 
 **This technique does NOT apply to:**
 - **Changes to existing requirements:** The definition of 'Correct' has changed. In that case, treat the updates to the test and the code as a single atomic change. You can modify them in whatever order feels best to you.
-- **Refactoring:** You want to restructure the code to make it more maintainable without adding complexity. Tests should always be passing during these changes.
+- **Refactoring:** You want to restructure the code to make it more maintainable without adding complexity. Tests should always be passing during these changes and add no new complexity.
 
 ## When to Use This
 
