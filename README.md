@@ -41,10 +41,10 @@ Both cases add complexity to the production code that must be justified by a new
    - The "fix" is production code that requires a new test to verify it
 
 3. **Verify it through 4 states:**
-   |                | **Test off**              | **Test on**               |
+   |                | **Test off**               | **Test on**                |
    |----------------|----------------------------|----------------------------|
-   | **Fix off**    | **State I** (baseline)     | **State II** (test fails) |
-   | **Fix on**     | **State III** (no side effects) | **State IV** (test passes) |
+   | **Fix off**    | **State I** (tests pass)   | **State II** (tests fail)  |
+   | **Fix on**     | **State III** (tests pass) | **State IV** (tests pass)  |
 
    - **Run all tests** for the module you're changing (not just the new test)
    - Use this same test scope for all 4 states
