@@ -1,17 +1,26 @@
 # TDD for People Who Think TDD is Impractical
 
-**The Problem:** You can't write the test first because you don't know what the API should look like yet.
+## A common complaint about TDD…
 
-**The Solution:** Design thinking and test verification are separate activities.
+A lot of people find TDD confusing or impractical:
+
+“How am I supposed to test something that doesn’t exist?”
+“How do I know what test to write when I haven’t figured out the design?”
+“If the design changes while I'm exploring, won’t that just break tests constantly?”
+
+This pattern is meant for that fuzzy phase — the part where you’re still figuring things out and the classic “write the test first” rule feels unrealistic.
 
 ## What "Fix" Means
 
-> **In this guide: "fix" = any production code change that requires a new test to verify it**
+One small idea we need before we go further
 
-In TDD, new features and bug fixes are treated identically—both require adding a new test:
+Before the technique makes sense, we need to name one thing clearly.
 
-- **New feature:** The test didn't exist because the feature didn't exist
-- **Bug fix:** The test didn't exist, or it would have caught the bug.
+What a “fix” means
+
+A fix is any change to production code that requires a new test to justify it.
+It might be repairing a bug, adding a behavior, or adjusting an existing one.
+If the change needs a new test, it counts as a fix.
 
 Both cases add complexity to the production code that must be justified by a new failing test. This technique maintains that discipline even when you draft both pieces first.
 
