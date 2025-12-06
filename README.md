@@ -49,6 +49,7 @@ Both cases add complexity to the production code that must be justified by a new
    - **Run all tests** for the module you're changing (not just the new test)
    - Use this same test scope for all 4 states
    - Verify by toggling on/off
+   - These states can be verified in any order, but the given order tends to work well.
 
    - **State I:** Both off → Must be green (no pre-existing failures)
    - **State II:** Fix on, test off → Must be green (no regressions)
