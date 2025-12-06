@@ -106,7 +106,14 @@ def calculate_discount(price, is_member):
     return price
 
 # Second pair: member discount
-# State I: First pair working → Green ✓
+# State I: Test off, Fix off → Green ✓
+def test_discount():
+    assert calculate_discount(100, False) == 100
+    # assert calculate_discount(100, True) == 90
+def calculate_discount(price, is_member):
+#     if is_member:
+#         return price * 0.9
+    return price
 # State II: Test off, Fix on  → Green ✓
 def test_discount():
     assert calculate_discount(100, False) == 100
