@@ -8,36 +8,29 @@ Standard TDD demands you write a test before you write code. **But you cannot te
 
 If you are exploring a new idea, you often don't know the class names, the method signatures, or how the data flows. Trying to write a test first in this state leads to paralysis or bad tests that you have to rewrite five times.
 
+## What TDD Actually Gives You
+
+Before abandoning test-first, it's worth understanding what you'd lose:
+
+- **Thorough regression safety** -- Every line of implementation has a test that would fail without it. This is stronger than code coverage, which only tells you a line *executed*. You can have 100% coverage and still delete a line without any test failing. With TDD, if it matters, removing it will cause a test to break.
+- **Forced precision** — Writing the test first forces you to define "correct" before you code. You can't hand-wave; you have to commit to specific inputs and outputs.
+- **Testability** -- Writing tests early helps make sure you think about testability early, making sure your tests are clear and straightforward instead of having to work around a poor design.
+- **The red-green proof** — Seeing a test fail before it passes proves the test actually exercises the code you think it does. A test that's never been red might be testing nothing.
+
+That last point is the critical one. Tests written after the fact often pass by accident—they may not actually cover the logic you intended. You never saw them fail, so you don't know if they *can* fail.
+
 ## The Solution
 
 This pattern allows you to write the implementation first (Drafting) to figure out your design, then uses a simple toggle trick to provide many of the same benefits as standard red/green TDD.
 
-## A common complaint about TDD…
+**The goal is simple:** give you a clear boundary between code that is verified (code you've actually seen behave correctly) and code that is still just a sketch. Most of the friction around TDD comes from not knowing when it's "safe" to commit to an idea. This pattern gives you a small, repeatable way to turn uncertain exploratory code into code you can trust.
 
-A lot of people find TDD confusing or impractical:
-
-    “How am I supposed to test something that doesn’t exist?”
-    “How do I know what test to write when I haven’t figured out the design?”
-    “If the design changes while I'm exploring, won’t that just break tests constantly?”
-
-This pattern is meant for that fuzzy phase — the part where you’re still figuring things out and the classic “write the test first” rule feels unrealistic.
-
-**The goal of this approach is simple:**
-to give you a clear boundary between code that is verified (code you’ve actually seen behave correctly) and code that is still just a sketch or experiment.
-Most of the friction around TDD comes from not knowing when it’s “safe” to commit to an idea.
-This pattern gives you a small, repeatable way to turn uncertain exploratory code into code you can trust.
-
-## What "Fix" Means
-
-A **fix** is any change to production code that makes a new test pass—behavior that no existing test covers. From the test's perspective, bugs and missing features are the same thing: a gap between what the code does and what it should do. The code that closes that gap is a fix, whether you're repairing a defect or adding new functionality.
-
-
-**This technique does NOT apply to:**
-- **Changes to existing requirements:** The definition of 'Correct' has changed. In that case, treat the updates to the test and the code as a single atomic change. You can modify them in whatever order feels best to you.
-- **Refactoring:** You want to restructure the code to make it more maintainable without adding complexity. Tests should always be passing during these changes and add no new complexity.
+**How it preserves TDD's benefits:**
+- **Thorough regression safety** -- Every fix is paired with a test that fails without it. No line of code survives without proving its necessity.
+- **Forced precision** — You still write specific assertions before the fix is "live."
+- **The red-green proof** — State III (fix off, test on) forces you to see the test fail. If it doesn't fail, your test isn't testing what you think it is.
 
 ## When to Use This
-
 
 Don't use this if the test is obvious. If you already know exactly what the test code should look like, and you know the fix is easy, using these toggles will just feel like busywork. This tool is specifically for the moments when you don't yet know what test to write.
 
@@ -49,7 +42,15 @@ Don't use this if the test is obvious. If you already know exactly what the test
 
 TDD wants you to add one small test at a time, but often, you cannot see the 'minimal step' until you have drafted the full solution. Drafting allows you to solve the architectural puzzle holistically. The verification phase then forces you to decompose that solution into atomic, proven steps.
 
-You’re not abandoning TDD, you’re just allowing yourself a sketch phase, then forcing each piece of that sketch back through the classic “prove it fails, then make it pass” loop.
+You're not abandoning TDD, you're just allowing yourself a sketch phase, then forcing each piece of that sketch back through the classic "prove it fails, then make it pass" loop.
+
+## What "Fix" Means
+
+A **fix** is any change to production code that makes a new test pass—behavior that no existing test covers. From the test's perspective, bugs and missing features are the same thing: a gap between what the code does and what it should do. The code that closes that gap is a fix, whether you're repairing a defect or adding new functionality.
+
+**This technique does NOT apply to:**
+- **Changes to existing requirements:** The definition of 'Correct' has changed. In that case, treat the updates to the test and the code as a single atomic change. You can modify them in whatever order feels best to you.
+- **Refactoring:** You want to restructure the code to make it more maintainable without adding complexity. Tests should always be passing during these changes and add no new complexity.
 
 ## The Technique
 
@@ -85,7 +86,9 @@ You’re not abandoning TDD, you’re just allowing yourself a sketch phase, the
    - These states can be verified in any order, but the given order tends to work well.
 
    - **State I:** Both off → Must be green (no pre-existing failures)
+     - *This is your starting point. If tests aren't green before you begin, fix that first.*
    - **State II:** Fix on, test off → Must be green (no regressions)
+     - *A quick sanity check: does your fix break anything that was already working?*
      - *Note: Traditional TDD verifies this implicitly. Making it explicit helps isolate issues when State IV fails—did your fix break existing tests, or does your new test have problems? This catches fixes that are overly broad—changing more behavior than intended.*
    - **State III:** Fix off, test on → Must be red (test detects the missing behavior)
    - **State IV:** Both on → Must be green (fix makes test pass)
@@ -124,8 +127,28 @@ Write your implementation and test freely. Keep them commented out so they don't
 #     assert calculate_discount(100, True) == 90
 ```
 
-### 2. Verify: Watch it Fail (State III)
-Uncomment **only the test**. This proves the test fails (Red) and confirms you aren't getting a false positive.
+### 2. Verify State I: Both Off (Green)
+Run your existing tests with everything still commented out. This confirms you're starting from a clean baseline.
+
+### 3. Verify State II: Fix On, Test Off (Green)
+Uncomment **only the fix**. Run tests—they should still pass. This confirms your new code doesn't break anything existing.
+
+```diff
+- # def calculate_discount(price, is_member):
++ def calculate_discount(price, is_member):
+- #     if is_member:
++     if is_member:
+- #         return price * 0.9
++         return price * 0.9
+- #     return price
++     return price
+
+  # def test_discount():
+  #     assert calculate_discount(100, True) == 90
+```
+
+### 4. Verify State III: Fix Off, Test On (Red)
+Comment the fix back out, uncomment **only the test**. The test must fail—this proves it actually detects the missing behavior.
 
 ```diff
   # def calculate_discount(price, is_member):
@@ -139,8 +162,8 @@ Uncomment **only the test**. This proves the test fails (Red) and confirms you a
 +     assert calculate_discount(100, True) == 90
 ```
 
-### 3. Verify: Watch it Pass (State IV)
-Uncomment **the fix**. This proves the code works (Green).
+### 5. Verify State IV: Both On (Green)
+Uncomment **the fix**. Now both are live and the test passes.
 
 ```diff
 - # def calculate_discount(price, is_member):
@@ -219,9 +242,6 @@ def test_tiers():
 ```
 
 ## Why This Works
-
-**Why not just add tests afterward?**
-When test-first feels impractical, developers often explore the design, verify manually, and add unit tests later. But those after-the-fact tests don't prove you understand why each line of code is there. You can't answer: "What would fail without this line?" The 4-state verification forces that question. When you toggle the fix off and watch the test fail (State III), you're proving you understand exactly what that code contributes—the same understanding that test-first TDD provides, but achieved after the design is clear.
 
 - **Low friction:** You don't have to commit to a design before you understand the problem
 - **High confidence:** Code that survives all 4 states has been tested from multiple angles—you've seen it both fail and succeed
