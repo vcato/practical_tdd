@@ -29,7 +29,7 @@ This pattern gives you a small, repeatable way to turn uncertain exploratory cod
 
 ## What "Fix" Means
 
-A **fix** is any change to production code that makes a new test pass—behavior that no existing test covers. It might be a bug repair or new functionality, but either way it adds complexity (more code paths) until you refactor.
+A **fix** is any change to production code that makes a new test pass—behavior that no existing test covers. From the test's perspective, bugs and missing features are the same thing: a gap between what the code does and what it should do. The code that closes that gap is a fix, whether you're repairing a defect or adding new functionality.
 
 
 **This technique does NOT apply to:**
@@ -62,6 +62,9 @@ You’re not abandoning TDD, you’re just allowing yourself a sketch phase, the
    - Look at one line of code that you've drafted. Ask, "What is the simplest example that wouldn't work without it?"
    - Minimal: the simplest (fewest steps and code paths) test/fix where you can still verify all 4 states
 
+   **Finding minimal pairs:**
+   Pick one line from your draft that you want to verify. Think about why it's there. What's an example of something that wouldn't work properly without it? That example is your test.
+
 3. **Choose an activation mechanism**
    - Decide how you are going to turn the fix and test off and on.
    - This can be
@@ -83,7 +86,7 @@ You’re not abandoning TDD, you’re just allowing yourself a sketch phase, the
 
    - **State I:** Both off → Must be green (no pre-existing failures)
    - **State II:** Fix on, test off → Must be green (no regressions)
-     - *Note: Traditional TDD verifies this implicitly. Making it explicit helps isolate issues when State IV fails—did your fix break existing tests, or does your new test have problems?*
+     - *Note: Traditional TDD verifies this implicitly. Making it explicit helps isolate issues when State IV fails—did your fix break existing tests, or does your new test have problems? This catches fixes that are overly broad—changing more behavior than intended.*
    - **State III:** Fix off, test on → Must be red (test detects the missing behavior)
    - **State IV:** Both on → Must be green (fix makes test pass)
 
@@ -95,7 +98,7 @@ You’re not abandoning TDD, you’re just allowing yourself a sketch phase, the
    - *Any revision means you must re-verify all states with the new test/fix pair*
 
 5. **Remove the scaffolding**
-    - if you used flags, bake them in and simplify.
+    - If you used flags, bake them in and simplify.
     - If this requires any code changes, run the tests again to double-check.
 
 6. **Repeat** for the next test/fix pair
@@ -216,6 +219,9 @@ def test_tiers():
 ```
 
 ## Why This Works
+
+**Why not just add tests afterward?**
+When test-first feels impractical, developers often explore the design, verify manually, and add unit tests later. But those after-the-fact tests don't prove you understand why each line of code is there. You can't answer: "What would fail without this line?" The 4-state verification forces that question. When you toggle the fix off and watch the test fail (State III), you're proving you understand exactly what that code contributes—the same understanding that test-first TDD provides, but achieved after the design is clear.
 
 - **Low friction:** You don't have to commit to a design before you understand the problem
 - **High confidence:** Code that survives all 4 states has been tested from multiple angles—you've seen it both fail and succeed
