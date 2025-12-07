@@ -29,11 +29,7 @@ This pattern gives you a small, repeatable way to turn uncertain exploratory cod
 
 ## What "Fix" Means
 
-Before the technique makes sense, we need to name one thing clearly.
-
-What a “fix” means
-
-A fix is any change to production code that is needed to make a new test pass. It might be repairing a bug where we didn't handle an edge case before, or it might be adding new behavior to satisfy requirements. Either way, it is behavior that we had no existing test for. If we're starting from a baseline where all current complexity has been shown to be necessary through existing tests, then a fix is necessarily something that adds complexity (more steps or more code paths), at least until we refactor.
+A **fix** is any change to production code that makes a new test pass—behavior that no existing test covers. It might be a bug repair or new functionality, but either way it adds complexity (more code paths) until you refactor.
 
 
 **This technique does NOT apply to:**
@@ -66,7 +62,7 @@ You’re not abandoning TDD, you’re just allowing yourself a sketch phase, the
    - Look at one line of code that you've drafted. Ask, "What is the simplest example that wouldn't work without it?"
    - Minimal: the simplest (fewest steps and code paths) test/fix where you can still verify all 4 states
 
-4. **Choose an activation mechanism**
+3. **Choose an activation mechanism**
    - Decide how you are going to turn the fix and test off and on.
    - This can be
      - Commenting out the code to turn it off, uncommenting it to turn it on
@@ -74,16 +70,15 @@ You’re not abandoning TDD, you’re just allowing yourself a sketch phase, the
      - Using test framework options, like a "skip" flag for a test.
    - Use whatever approach makes sense to you for switching the fix and the test off and on.
 
-5. **Verify it through 4 states:**
+4. **Verify it through 4 states:**
    |                | **Test off**               | **Test on**                |
    |----------------|----------------------------|----------------------------|
    | **Fix off**    | **State I** (tests pass)   | **State III** (tests fail) |
    | **Fix on**     | **State II** (tests pass)  | **State IV** (tests pass)  |
 
-   - 
    - Use this same test scope for all 4 states.
    - Run all tests for the module you're changing (not just the new test).
-   - Verify that the tests pass or fail and indicated for each state.
+   - Verify that the tests pass or fail as indicated for each state.
    - These states can be verified in any order, but the given order tends to work well.
 
    - **State I:** Both off → Must be green (no pre-existing failures)
@@ -99,11 +94,11 @@ You’re not abandoning TDD, you’re just allowing yourself a sketch phase, the
    - State IV red → Your fix doesn't work, revise it
    - *Any revision means you must re-verify all states with the new test/fix pair*
 
-6. **Remove the scaffolding**
+5. **Remove the scaffolding**
     - if you used flags, bake them in and simplify.
     - If this requires any code changes, run the tests again to double-check.
 
-8. **Repeat** for the next test/fix pair
+6. **Repeat** for the next test/fix pair
 
 ---
 
@@ -222,9 +217,7 @@ def test_tiers():
 
 ## Why This Works
 
-- **Design freedom:** Draft in any order, explore the API, think ahead
-- **Early regression check:** State II provides a quick check that your fix isn't breaking anything
-- **No false confidence:** State III proves your test can actually fail
-- **Verified fixes:** State IV proves your fix actually works
-- **No waste:** You keep only the tests you need
-- **Confident Refactoring:** Your tests thoroughly check that the behavior works as expected
+- **Low friction:** You don't have to commit to a design before you understand the problem
+- **High confidence:** Code that survives all 4 states has been tested from multiple angles—you've seen it both fail and succeed
+- **No waste:** You keep only the tests that prove something
+- **Safe refactoring:** Once verified, you can restructure freely knowing the behavior is locked in
