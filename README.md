@@ -79,24 +79,11 @@ A **fix** is any change to production code that makes a new test pass -- behavio
    | **Fix off**    | **State I** (tests pass)   | **State III** (tests fail) |
    | **Fix on**     | **State II** (tests pass)  | **State IV** (tests pass)  |
 
-   - **State I:** Both off → Must be green (no pre-existing failures)
-   - **State II:** Fix on, test off → Must be green (no regressions)
-     - *A quick sanity check: does your fix break anything that was already working?*
-     - *Note: State IV verified this implicitly. Making it explicit helps isolate issues when State IV fails -- did your fix break existing tests, or does your new test have problems? This catches fixes that are overly broad -- changing more behavior than intended.*
-   - **State III:** Fix off, test on → Must be red (test detects the missing behavior)
-   - **State IV:** Both on → Must be green (fix makes test pass)
-
-   As you develop the test/fix pair, use the states as checkpoints:
-   - State I (both off): You can stay here while you write inactive code or refactor to make sure you aren't changing behavior.
-   - State II (fix on, test off): You can stay here while building the fix to continuously verify you're not breaking existing tests.
-   - State III (fix off, test on): Keep writing test code until the test fails as expected.
-   - State IV (fix on, test on): Keep writing fix code until the tests pass.
-
-   **If something fails:**
-   - State I red → Fix pre-existing failures
-   - State II red → Your fix breaks existing tests, revise it
-   - State III green → Your test doesn't actually test the fix, revise it
-   - State IV red → Your fix doesn't work, revise it
+   Bounce between these states to verify them, until they are all verified with the same test/fix pair:
+   - **State I** (both off, must be green): Stay here while writing inactive code or refactoring — confirms you aren't changing existing behavior.
+   - **State II** (fix on, test off, must be green): Stay here while building the fix — confirms you're not breaking existing tests. This also catches fixes that are overly broad, changing more behavior than intended.
+   - **State III** (fix off, test on, must be red): Build test code here until the test fails as expected — confirms the test actually detects missing behavior.
+   - **State IV** (both on, must be green): Build fix code here until tests pass — confirms the fix works.
 
    You only re-verify a state if you've changed what it depends on: State II depends on the fix, State III depends on the test, State IV depends on both.
 
