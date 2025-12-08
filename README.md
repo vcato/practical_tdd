@@ -16,7 +16,7 @@ Before abandoning TDD, it's worth understanding what you'd lose:
 - **No unnecessary code** -- Every line of the implementation exists to satisfy a test. If you can't point to an example that requires it, you don't write it.
 - **Perspective** -- Having examples of how your implementation will be used helps make sure you stay focused on results.
 - **Testability** -- Writing tests early helps make sure you think about testability early, making sure your tests are clear and straightforward instead of having to work around a poor design.
-- **The red-green proof** -- Seeing a test fail before it passes proves the test actually exercises the code you think it does. A test that's never been red might be testing nothing.
+- **Verified Examples** -- You don't just write the examples. You show that the example actually demonstrates a problem with the implementation.
 
 That last point is the critical one. Tests written after the fact often pass by accident -- they may not actually cover the logic you intended. You never saw them fail, so you don't know if they *can* fail.
 
@@ -31,7 +31,7 @@ This pattern allows you to write the implementation first (Drafting) to figure o
 - **No unnecessary code** -- You still only write code to satisfy tests. The draft is just a sketch; verified code still requires an example.
 - **Perspective** -- You still write examples before the fix is "live," keeping you focused on results.
 - **Testability** -- You still bring in tests early, while your design is still easy to change.
-- **The red-green proof** -- State III (fix off, test on) forces you to see the test fail. If it doesn't fail, your test isn't testing what you think it is.
+- **Verified Examples** -- State III (fix off, test on) forces you to see the test fail. If it doesn't fail, your example isn't demonstrating what you think it is.
 
 This technique doesn't replace [TDD's three laws](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd)—it's a way to follow them when you don't yet know what to test.
 
