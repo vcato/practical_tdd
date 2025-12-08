@@ -286,6 +286,9 @@ Start with a stub:
 ```python
 def get_tier(is_member):
     assert False
+
+def test_tiers():
+    pass
 ```
 
 **Enter State III** (FIX_ON = False, TEST_ON = True). Objective: make the test fail.
@@ -293,7 +296,7 @@ def get_tier(is_member):
 Build up the test — just enough to hit the assert:
 
 ```python
-def test_non_member_no_tier():
+def test_tiers():
     if TEST_ON:
         get_tier(False)
 ```
@@ -316,7 +319,7 @@ Set `FIX_ON = True`. Run it — no crash.
 Expand the test:
 
 ```python
-def test_non_member_no_tier():
+def test_tiers():
     if TEST_ON:
         assert get_tier(False) is None
 ```
@@ -331,7 +334,52 @@ Run it. Passes. State IV objective met.
 
 ### 4. Second Test/Fix Pair: Member path
 
-Add new flags or reuse. Same process — enter State III (make test fail), enter State IV (make test pass), then verify all 4 states.
+Reset flags for the new pair: `FIX_ON = False`, `TEST_ON = False`.
+
+**Enter State III.** Objective: make the test fail.
+
+Add to the test — just enough to hit the assert:
+
+```python
+def test_tiers():
+    assert get_tier(False) is None  # already verified
+    if TEST_ON:
+        get_tier(True)
+```
+
+Set `TEST_ON = True`. Run it — crashes on `assert False`. State III objective met.
+
+**Enter State IV.** Objective: make the test pass.
+
+Build up the fix:
+
+```python
+def get_tier(is_member):
+    if FIX_ON and is_member:
+        return "silver"
+    if not is_member:
+        return None
+    assert False
+```
+
+Set `FIX_ON = True`. Run it — no crash.
+
+Expand the test:
+
+```python
+def test_tiers():
+    assert get_tier(False) is None
+    if TEST_ON:
+        assert get_tier(True) == "silver"
+```
+
+Run it. Passes. State IV objective met.
+
+**Verify all 4 states** by flipping flags:
+- State I: Both False → Green ✓
+- State II: FIX_ON True, TEST_ON False → Green ✓
+- State III: FIX_ON False, TEST_ON True → Red ✓
+- State IV: Both True → Green ✓
 
 ### 5. Cleanup
 
