@@ -60,12 +60,10 @@ A **fix** is any change to production code that makes a new test pass -- behavio
    - Write the tests that you think would verify it (commented out or behind a flag)
    - Think through the design. Revise. Explore. This is just sketching.
 
-2. **Pick one minimal test/fix pair** from your draft
-   - Look at one line of code that you've drafted. Ask, "What is the simplest example that wouldn't work without it?"
-   - Minimal: the simplest (fewest steps and code paths) test/fix where you can still verify all 4 states
-
-   **Finding minimal pairs:**
-   Pick one line from your draft that you want to verify. Think about why it's there. What's an example of something that wouldn't work properly without it? That example is your test.
+2. **Pick one line from your draft**
+   - Look at a line you wrote. Ask: "What is this trying to do? What's the simplest example that would fail without it?"
+   - That example is your test. The code to make it pass is your fix.
+   - This is a minimal pair: the least complexity you can add to implementation and tests while still being verifiable.
 
 3. **Choose an activation mechanism**
    - Decide how you are going to turn the fix and test off and on.
