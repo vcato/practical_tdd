@@ -55,9 +55,9 @@ A **fix** is any change to production code that makes a new test pass -- behavio
 
 ## The Technique
 
-1. Draft both pieces (in any order, any level of detail, ideally focusing on a single, cohesive unit of behavior or a small set of related changes)
-   - Write the code you think will work (commented out or behind a flag -- examples below show when to use each)
-   - Write the tests that you think would verify it (commented out or behind a flag)
+1. Draft your approach (in any order, any level of detail, ideally focusing on a single, cohesive unit of behavior or a small set of related changes)
+   - Sketch the logic you think will work — this can be pseudocode, comments, notes, or real code
+   - Sketch the tests you think would verify it — same flexibility applies
    - Think through the design. Revise. Explore. This is just sketching.
 
 2. **Pick one line from your draft**
@@ -97,7 +97,8 @@ A **fix** is any change to production code that makes a new test pass -- behavio
    - State II red → Your fix breaks existing tests, revise it
    - State III green → Your test doesn't actually test the fix, revise it
    - State IV red → Your fix doesn't work, revise it
-   - *Any revision means you must re-verify all states with the new test/fix pair*
+
+   You only re-verify a state if you've changed what it depends on: State II depends on the fix, State III depends on the test, State IV depends on both.
 
 5. **Remove the scaffolding**
     - If you used flags, bake them in and simplify.
@@ -132,15 +133,19 @@ def calculate_discount(price, is_member):
 
 Look at your draft. "If not a member, just return the price" — that's a path you can implement.
 
-**Build up the test — just enough to hit the assert:**
+**Enter State III** (fix off, test on). Objective: make the test fail.
+
+Build up the test — just enough to hit the assert:
 ```python
 def test_non_member_pays_full_price():
     calculate_discount(100, False)
 ```
 
-Run it. It crashes on `assert False`. Good — this confirms your test is reaching the path you intend to implement.
+Run it. It crashes on `assert False`. State III objective met — the test fails without the fix. This also confirms your test is reaching the path you intend to implement.
 
-**Build up the fix — just enough to not crash:**
+**Enter State IV** (fix on, test on). Objective: make the test pass.
+
+Build up the fix — just enough to not crash:
 ```python
 def calculate_discount(price, is_member):
     if not is_member:
@@ -148,56 +153,56 @@ def calculate_discount(price, is_member):
     assert False
 ```
 
-Run it. The test no longer crashes.
+Run it. The test no longer crashes. But we need to verify the actual behavior.
 
-**Expand the test to verify the behavior:**
+Expand the test:
 ```python
 def test_non_member_pays_full_price():
     assert calculate_discount(100, False) == 100
 ```
 
-**Now verify through 4 states.** Comment out the fix to use it as the activation mechanism:
+Run it. Passes. State IV objective met.
 
-```python
-def calculate_discount(price, is_member):
-    # if not is_member:
-    #     return price
-    assert False
-
-# def test_non_member_pays_full_price():
-#     assert calculate_discount(100, False) == 100
-```
+**Now verify all 4 states with the same test/fix pair.** Use comments as the activation mechanism:
 
 - **State I** (both off): Green — existing tests pass
-- **State II** (fix on, test off): Uncomment the fix. Green — doesn't break anything.
-  ```python
-  def calculate_discount(price, is_member):
-      if not is_member:
-          return price
-      assert False
-
-  # def test_non_member_pays_full_price():
-  #     assert calculate_discount(100, False) == 100
-  ```
-- **State III** (fix off, test on): Comment fix back out, uncomment test. Red — hits `assert False`.
   ```python
   def calculate_discount(price, is_member):
       # if not is_member:
       #     return price
       assert False
 
-  def test_non_member_pays_full_price():
-      assert calculate_discount(100, False) == 100
+  # def test_non_member_pays_full_price():
+  #     assert calculate_discount(100, False) == 100
   ```
-- **State IV** (both on): Uncomment fix. Green — test passes.
-  ```python
-  def calculate_discount(price, is_member):
-      if not is_member:
-          return price
-      assert False
 
-  def test_non_member_pays_full_price():
-      assert calculate_discount(100, False) == 100
+- **State II** (fix on, test off): Green — fix doesn't break anything.
+  ```diff
+  -     # if not is_member:
+  -     #     return price
+  +     if not is_member:
+  +         return price
+  ```
+
+- **State III** (fix off, test on): Red — test hits `assert False`.
+  ```diff
+  -     if not is_member:
+  -         return price
+  +     # if not is_member:
+  +     #     return price
+
+  - # def test_non_member_pays_full_price():
+  - #     assert calculate_discount(100, False) == 100
+  + def test_non_member_pays_full_price():
+  +     assert calculate_discount(100, False) == 100
+  ```
+
+- **State IV** (both on): Green — test passes.
+  ```diff
+  -     # if not is_member:
+  -     #     return price
+  +     if not is_member:
+  +         return price
   ```
 
 First path verified.
@@ -206,15 +211,19 @@ First path verified.
 
 Look at the draft. "If a member, take 10% off" — next path.
 
-**Build up the test — just enough to hit the assert:**
+**Enter State III.** Objective: make the test fail.
+
+Build up the test — just enough to hit the assert:
 ```python
 def test_member_gets_discount():
     calculate_discount(100, True)
 ```
 
-Run it. Crashes on `assert False`. Good — you're exercising the member path.
+Run it. Crashes on `assert False`. State III objective met — you're exercising the member path and it fails without the fix.
 
-**Build up the fix — just enough to not crash:**
+**Enter State IV.** Objective: make the test pass.
+
+Build up the fix:
 ```python
 def calculate_discount(price, is_member):
     if not is_member:
@@ -222,16 +231,18 @@ def calculate_discount(price, is_member):
     return price * 0.9
 ```
 
-**Expand the test to verify the behavior:**
+Expand the test:
 ```python
 def test_member_gets_discount():
     assert calculate_discount(100, True) == 90
 ```
 
-**Verify through 4 states** using comments as the activation mechanism:
+Run it. Passes. State IV objective met.
 
-- **State III** (fix off, test on): Replace `return price * 0.9` with `assert False`, run both tests. New test crashes.
-- **State IV** (both on): Restore `return price * 0.9`. Both tests pass.
+**Verify all 4 states** using comments as the activation mechanism:
+
+- **State III**: Replace `return price * 0.9` with `assert False`, run both tests. New test crashes. ✓
+- **State IV**: Restore `return price * 0.9`. Both tests pass. ✓
 
 Second path verified.
 
@@ -248,54 +259,84 @@ Tests stay green.
 
 ## Example 2: Multi-Location (The "Flag" Toggle)
 
-When your draft touches multiple files, comments are messy. Instead, use a temporary "Toggle Block" at the top of your file (or in a config).
+When changes span multiple files, commenting and uncommenting becomes error-prone. Use flags — flip a single variable to toggle all the pieces.
 
-### 1. The Draft (Safe Mode)
-Write the code you *want* to have, guarded by a flag.
+### 1. The Draft
+
+```
+# get_tier(is_member)
+# non-members have no tier (None)
+# members get "silver"
+```
+
+### 2. Set Up Scaffolding
 
 ```python
 # --- TEMPORARY SCAFFOLDING ---
-FIX_SILVER = False
-TEST_SILVER = False
+FIX_ON = False
+TEST_ON = False
 # -----------------------------
+```
 
-# Location A: The Logic
+Place this where both logic and tests can access it.
+
+### 3. First Test/Fix Pair: Non-member path
+
+Start with a stub:
+
+```python
 def get_tier(is_member):
-    if FIX_SILVER and is_member:
-        return "silver"
-    return None
-
-# Location B: The Test
-def test_tiers():
-    assert get_tier(False) is None
-    if TEST_SILVER:
-        assert get_tier(True) == "silver"
+    assert False
 ```
 
-### 2. Verify: Watch it Fail (State III)
-Flip the **Test Switch** to `True`. The logic is still disabled, so the test must fail.
+**Enter State III** (FIX_ON = False, TEST_ON = True). Objective: make the test fail.
 
-```diff
-  # --- TEMPORARY SCAFFOLDING ---
-  FIX_SILVER = False
-- TEST_SILVER = False
-+ TEST_SILVER = True
-  # -----------------------------
+Build up the test — just enough to hit the assert:
+
+```python
+def test_non_member_no_tier():
+    if TEST_ON:
+        get_tier(False)
 ```
 
-### 3. Verify: Watch it Pass (State IV)
-Flip the **Fix Switch** to `True`. Now the logic is live and the test passes.
+Set `TEST_ON = True`. Run it — crashes on `assert False`. State III objective met.
 
-```diff
-  # --- TEMPORARY SCAFFOLDING ---
-- FIX_SILVER = False
-+ FIX_SILVER = True
-  TEST_SILVER = True
-  # -----------------------------
+**Enter State IV** (FIX_ON = True, TEST_ON = True). Objective: make the test pass.
+
+Build up the fix:
+
+```python
+def get_tier(is_member):
+    if FIX_ON and not is_member:
+        return None
+    assert False
 ```
 
-### 4. Cleanup
-Delete the flags and the `if` guards. You are done.
+Set `FIX_ON = True`. Run it — no crash.
+
+Expand the test:
+
+```python
+def test_non_member_no_tier():
+    if TEST_ON:
+        assert get_tier(False) is None
+```
+
+Run it. Passes. State IV objective met.
+
+**Verify all 4 states** by flipping flags:
+- State I: Both False → Green ✓
+- State II: FIX_ON True, TEST_ON False → Green ✓
+- State III: FIX_ON False, TEST_ON True → Red ✓
+- State IV: Both True → Green ✓
+
+### 4. Second Test/Fix Pair: Member path
+
+Add new flags or reuse. Same process — enter State III (make test fail), enter State IV (make test pass), then verify all 4 states.
+
+### 5. Cleanup
+
+Remove flags and guards:
 
 ```python
 def get_tier(is_member):
