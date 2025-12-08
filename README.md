@@ -22,7 +22,7 @@ That last point is the critical one. Tests written after the fact often pass by 
 
 ## The Solution
 
-This pattern allows you to write the implementation first (Drafting) to figure out your design, then uses a simple toggle trick to provide many of the same benefits as standard red/green TDD.
+This pattern allows you to write the implementation first (Drafting) to figure out your design, then uses a simple toggle trick to provide many of the same benefits as strictly writing the examples first.
 
 **The goal is simple:** to give you a clear boundary between code that is verified (code you've actually seen behave correctly) and code that is still just a sketch. Most of the friction around TDD comes from not knowing when it's "safe" to commit to an idea. This pattern gives you a small, repeatable way to turn uncertain exploratory code into code you can trust.
 
