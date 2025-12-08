@@ -63,7 +63,6 @@ A **fix** is any change to production code that makes a new test pass -- behavio
 2. **Pick one line from your draft**
    - Look at a line you wrote. Ask: "What is this trying to do? What's the simplest example that would fail without it?"
    - That example is your test. The code to make it pass is your fix.
-   - This is a minimal pair: the least complexity you can add to implementation and tests while still being verifiable.
 
 3. **Choose an activation mechanism**
    - Decide how you are going to turn the fix and test off and on.
@@ -73,24 +72,25 @@ A **fix** is any change to production code that makes a new test pass -- behavio
      - Using test framework options, like a "skip" flag for a test.
    - Use whatever approach makes sense to you for switching the fix and the test off and on.
 
-4. **Verify it through 4 states:**
+4. **Build up the pair through trial runs until you can verify all 4 states:**
+
    |                | **Test off**               | **Test on**                |
    |----------------|----------------------------|----------------------------|
    | **Fix off**    | **State I** (tests pass)   | **State III** (tests fail) |
    | **Fix on**     | **State II** (tests pass)  | **State IV** (tests pass)  |
 
-   - Use this same test scope for all 4 states.
-   - Run all tests for the module you're changing (not just the new test).
-   - Verify that the tests pass or fail as indicated for each state.
-   - These states can be verified in any order, but the given order tends to work well.
-
    - **State I:** Both off → Must be green (no pre-existing failures)
-     - *This is your starting point. If tests aren't green before you begin, fix that first.*
    - **State II:** Fix on, test off → Must be green (no regressions)
      - *A quick sanity check: does your fix break anything that was already working?*
-     - *Note: Traditional TDD verifies this implicitly. Making it explicit helps isolate issues when State IV fails -- did your fix break existing tests, or does your new test have problems? This catches fixes that are overly broad -- changing more behavior than intended.*
+     - *Note: State IV verified this implicitly. Making it explicit helps isolate issues when State IV fails -- did your fix break existing tests, or does your new test have problems? This catches fixes that are overly broad -- changing more behavior than intended.*
    - **State III:** Fix off, test on → Must be red (test detects the missing behavior)
    - **State IV:** Both on → Must be green (fix makes test pass)
+
+   As you develop the test/fix pair, use the states as checkpoints:
+   - State I (both off): You can stay here while you write inactive code or refactor to make sure you aren't changing behavior.
+   - State II (fix on, test off): You can stay here while building the fix to continuously verify you're not breaking existing tests.
+   - State III (fix off, test on): Keep writing test code until the test fails as expected.
+   - State IV (fix on, test on): Keep writing fix code until the tests pass.
 
    **If something fails:**
    - State I red → Fix pre-existing failures
