@@ -1,4 +1,4 @@
-# Practical TDD: Draft First, Verify Later
+# Practical TDD: Draft Holistically, Verify Atomically
 
 **Stop staring at blank test files.**
 
@@ -10,7 +10,7 @@ If you are exploring a new idea, you often don't know the class names, the metho
 
 ## What TDD Actually Gives You
 
-Before abandoning test-first, it's worth understanding what you'd lose:
+Before abandoning TDD, it's worth understanding what you'd lose:
 
 - **Thorough regression safety** -- Every line of implementation has a test that would fail without it. This is stronger than code coverage, which only tells you a line *executed*. You can have 100% coverage and still delete a line without any test failing. With TDD, if it matters, removing it will cause a test to break.
 - **Forced precision** -- Writing the test first forces you to define "correct" before you code. You can't hand-wave; you have to commit to specific inputs and outputs.
@@ -45,20 +45,26 @@ TDD wants you to add one small test at a time, but often, you cannot see a good 
 
 You're not abandoning TDD, you're just allowing yourself a sketch phase, then forcing each piece of that sketch back through the classic "prove it fails, then make it pass" loop.
 
-## What "Fix" Means
+## Terminology
 
-A **fix** is any change to production code that makes a new test pass -- behavior that no existing test covers. From the test's perspective, bugs and missing features are the same thing: a gap between what the code does and what it should do. The code that closes that gap is a fix, whether you're repairing a defect or adding new functionality.
+In TDD, all behavior exists because you have an example of why you need it. You have the fewest examples that fully demonstrate the desired behavior, and you have the simplest implementation that satisfies these examples. We break the examples and implementation into tiny pieces called tests and fixes:
 
-**This technique does NOT apply to:**
-- **Changes to existing requirements:** If the definition of 'Correct' has changed, treat the updates to the test and the code as a single atomic change. You can modify them in whatever order feels best to you.
-- **Refactoring:** If you want to restructure the code to make it more maintainable without adding complexity, you aren't adding new tests, and all existing tests should stay green throughout the process.
+**Test:** An example of the desired behavior
+**Fix:** An implementation of the desired behavior
+
+Thinking of all new behavior as fixes keeps you honest: if you don't have an example of why you need some part of the implementation, then why are you writing it?
+
+**This does NOT apply to:**
+- **Changes to existing requirements:** If the definition of "correct" has changed, treat the updates to the test and the code as a single atomic change.
+- **Refactoring:** If you're restructuring code without changing behavior, you aren't adding new tests, and all existing tests should stay green throughout.
 
 ## The Technique
 
-1. Draft your approach (in any order, any level of detail, ideally focusing on a single, cohesive unit of behavior or a small set of related changes)
+1. **Draft your implementation and your tests**
+   - Do your drafting in any order and level of detail that helps you understand what you are trying to solve.
    - Sketch the logic you think will work — this can be pseudocode, comments, notes, or real code
    - Sketch the tests you think would verify it — same flexibility applies
-   - Think through the design. Revise. Explore. This is just sketching.
+   - Think through the design. Revise. Explore. Make sure it is clear that what you are writing is not the final production code.
 
 2. **Pick one line from your draft**
    - Look at a line you wrote. Ask: "What is this trying to do? What's the simplest example that would fail without it?"
@@ -72,7 +78,7 @@ A **fix** is any change to production code that makes a new test pass -- behavio
      - Using test framework options, like a "skip" flag for a test.
    - Use whatever approach makes sense to you for switching the fix and the test off and on.
 
-4. **Build up the pair through trial runs until you can verify all 4 states:**
+4. **Use a 4-state verification matrix to build up a test/fix pair**
 
    |                | **Test off**               | **Test on**                |
    |----------------|----------------------------|----------------------------|
@@ -94,6 +100,8 @@ A **fix** is any change to production code that makes a new test pass -- behavio
 6. **Repeat** for the next test/fix pair
 
 ---
+
+*Note: In practice, these are tiny edits and quick toggles—seconds each, not minutes. The examples below are verbose because static documentation can't show the rapid, iterative rhythm of the actual workflow.*
 
 ## Example 1: Building Incrementally
 
