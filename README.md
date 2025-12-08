@@ -107,76 +107,144 @@ A **fix** is any change to production code that makes a new test pass -- behavio
 
 ---
 
-## Example 1: Single Location (The "Comment" Toggle)
+## Example 1: Building Incrementally
 
-The "Draft" phase is just writing code in comments. The "Verification" phase is just deleting the `#` to let the compiler see it.
+### 1. The Draft
 
-### 1. The Draft (Safe Mode)
-Write your implementation and test freely. Keep them commented out so they don't break the build yet.
+Sketch out your approach — a rough algorithm, not necessarily compilable code.
+
+```
+# calculate_discount(price, is_member)
+# if not a member, just return the price
+# if a member, take 10% off and return that
+```
+
+This is your target. You'll build toward it one verified step at a time.
+
+### 2. First Test/Fix Pair: Non-member path
+
+Start with a stub that crashes on any unhandled path:
 
 ```python
-# Baseline: The code does not exist yet.
-#
-# def calculate_discount(price, is_member):
-#     if is_member:
-#         return price * 0.9
-#     return price
-#
-# def test_discount():
-#     assert calculate_discount(100, True) == 90
+def calculate_discount(price, is_member):
+    assert False
 ```
 
-### 2. Verify State I: Both Off (Green)
-Run your existing tests with everything still commented out. This confirms you're starting from a clean baseline.
+Look at your draft. "If not a member, just return the price" — that's a path you can implement.
 
-### 3. Verify State II: Fix On, Test Off (Green)
-Uncomment **only the fix**. Run tests -- they should still pass. This confirms your new code doesn't break anything existing.
-
-```diff
-- # def calculate_discount(price, is_member):
-+ def calculate_discount(price, is_member):
-- #     if is_member:
-+     if is_member:
-- #         return price * 0.9
-+         return price * 0.9
-- #     return price
-+     return price
-
-  # def test_discount():
-  #     assert calculate_discount(100, True) == 90
+**Build up the test — just enough to hit the assert:**
+```python
+def test_non_member_pays_full_price():
+    calculate_discount(100, False)
 ```
 
-### 4. Verify State III: Fix Off, Test On (Red)
-Comment the fix back out, uncomment **only the test**. The test must fail -- this proves it actually detects the missing behavior.
+Run it. It crashes on `assert False`. Good — this confirms your test is reaching the path you intend to implement.
 
-```diff
-  # def calculate_discount(price, is_member):
-  #     if is_member:
-  #         return price * 0.9
-  #     return price
-
-- # def test_discount():
-+ def test_discount():
-- #     assert calculate_discount(100, True) == 90
-+     assert calculate_discount(100, True) == 90
+**Build up the fix — just enough to not crash:**
+```python
+def calculate_discount(price, is_member):
+    if not is_member:
+        return price
+    assert False
 ```
 
-### 5. Verify State IV: Both On (Green)
-Uncomment **the fix**. Now both are live and the test passes.
+Run it. The test no longer crashes.
 
-```diff
-- # def calculate_discount(price, is_member):
-+ def calculate_discount(price, is_member):
-- #     if is_member:
-+     if is_member:
-- #         return price * 0.9
-+         return price * 0.9
-- #     return price
-+     return price
-
-  def test_discount():
-      assert calculate_discount(100, True) == 90
+**Expand the test to verify the behavior:**
+```python
+def test_non_member_pays_full_price():
+    assert calculate_discount(100, False) == 100
 ```
+
+**Now verify through 4 states.** Comment out the fix to use it as the activation mechanism:
+
+```python
+def calculate_discount(price, is_member):
+    # if not is_member:
+    #     return price
+    assert False
+
+# def test_non_member_pays_full_price():
+#     assert calculate_discount(100, False) == 100
+```
+
+- **State I** (both off): Green — existing tests pass
+- **State II** (fix on, test off): Uncomment the fix. Green — doesn't break anything.
+  ```python
+  def calculate_discount(price, is_member):
+      if not is_member:
+          return price
+      assert False
+
+  # def test_non_member_pays_full_price():
+  #     assert calculate_discount(100, False) == 100
+  ```
+- **State III** (fix off, test on): Comment fix back out, uncomment test. Red — hits `assert False`.
+  ```python
+  def calculate_discount(price, is_member):
+      # if not is_member:
+      #     return price
+      assert False
+
+  def test_non_member_pays_full_price():
+      assert calculate_discount(100, False) == 100
+  ```
+- **State IV** (both on): Uncomment fix. Green — test passes.
+  ```python
+  def calculate_discount(price, is_member):
+      if not is_member:
+          return price
+      assert False
+
+  def test_non_member_pays_full_price():
+      assert calculate_discount(100, False) == 100
+  ```
+
+First path verified.
+
+### 3. Second Test/Fix Pair: Member path
+
+Look at the draft. "If a member, take 10% off" — next path.
+
+**Build up the test — just enough to hit the assert:**
+```python
+def test_member_gets_discount():
+    calculate_discount(100, True)
+```
+
+Run it. Crashes on `assert False`. Good — you're exercising the member path.
+
+**Build up the fix — just enough to not crash:**
+```python
+def calculate_discount(price, is_member):
+    if not is_member:
+        return price
+    return price * 0.9
+```
+
+**Expand the test to verify the behavior:**
+```python
+def test_member_gets_discount():
+    assert calculate_discount(100, True) == 90
+```
+
+**Verify through 4 states** using comments as the activation mechanism:
+
+- **State III** (fix off, test on): Replace `return price * 0.9` with `assert False`, run both tests. New test crashes.
+- **State IV** (both on): Restore `return price * 0.9`. Both tests pass.
+
+Second path verified.
+
+### 4. Refactor
+
+Both paths verified. Simplify:
+
+```python
+def calculate_discount(price, is_member):
+    return price * 0.9 if is_member else price
+```
+
+Tests stay green.
 
 ## Example 2: Multi-Location (The "Flag" Toggle)
 
