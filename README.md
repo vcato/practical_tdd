@@ -13,8 +13,8 @@ If you are exploring a new idea, you often don't know the class names, the metho
 Before abandoning TDD, it's worth understanding what you'd lose:
 
 - **Thorough regression safety** -- Every line of implementation has a test that would fail without it. This is stronger than code coverage, which only tells you a line *executed*. You can have 100% coverage and still delete a line without any test failing. With TDD, if it matters, removing it will cause a test to break.
-- **No unnecessary code** -- Every line exists to satisfy a test. If you can't point to an example that requires it, you don't write it.
-- **Forced precision** -- Writing the test first forces you to define "correct" before you code. You can't hand-wave; you have to commit to specific inputs and outputs.
+- **No unnecessary code** -- Every line of the implementation exists to satisfy a test. If you can't point to an example that requires it, you don't write it.
+- **Perspective** -- Having examples of how your implementation will be used helps make sure you stay focused on results.
 - **Testability** -- Writing tests early helps make sure you think about testability early, making sure your tests are clear and straightforward instead of having to work around a poor design.
 - **The red-green proof** -- Seeing a test fail before it passes proves the test actually exercises the code you think it does. A test that's never been red might be testing nothing.
 
@@ -29,7 +29,7 @@ This pattern allows you to write the implementation first (Drafting) to figure o
 **How it preserves TDD's benefits:**
 - **Thorough regression safety** -- Every fix is paired with a test that fails without it. No line of code survives without proving its necessity.
 - **No unnecessary code** -- You still only write code to satisfy tests. The draft is just a sketch; verified code still requires an example.
-- **Forced precision** -- You still write specific assertions before the fix is "live."
+- **Perspective** -- You still write examples before the fix is "live," keeping you focused on results.
 - **Testability** -- You still bring in tests early, while your design is still easy to change.
 - **The red-green proof** -- State III (fix off, test on) forces you to see the test fail. If it doesn't fail, your test isn't testing what you think it is.
 
