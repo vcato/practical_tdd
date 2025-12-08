@@ -12,11 +12,11 @@ If you are exploring a new idea, you often don't know the class names, the metho
 
 Before abandoning TDD, it's worth understanding what you'd lose:
 
-- **Thorough regression safety** -- Every line of implementation has a test that would fail without it. This is stronger than code coverage, which only tells you a line *executed*. You can have 100% coverage and still delete a line without any test failing. With TDD, if it matters, removing it will cause a test to break.
-- **No unnecessary code** -- Every line of the implementation exists to satisfy a test. If you can't point to an example that requires it, you don't write it.
-- **Perspective** -- Having examples of how your implementation will be used helps make sure you stay focused on results.
-- **Testability** -- Writing tests early helps make sure you think about testability early, making sure your tests are clear and straightforward instead of having to work around a poor design.
-- **Verified Examples** -- You don't just write the examples. You show that the example actually demonstrates a problem with the implementation.
+- **Thorough regression safety** -- Every line of implementation has a test that would fail without it. This is stronger than code coverage, which only tells you a line *executed*. You can have 100% coverage and still delete a line without any test failing. With TDD, if any part of the implementation matters, removing it will cause a test to break. This follows Google's "Beyoncé Rule": "If you liked it, then you should have put a test on it." (as popularized in *Software Engineering at Google*).
+- **No unnecessary code** -- Every line of the implementation has an example to go with it. If you can't point to an example that requires the extra complexity, you don't write it.
+- **Perspective** -- Thinking about examples of how your implementation will be used early on helps make sure you stay focused on results.
+- **Testability** -- Thinking about examples early helps you think about testability early, making sure your tests are clear and straightforward instead of having to work around a poor design.
+- **Verified Examples** -- You don't just write the examples. You show that each example actually demonstrates a problem when the implementation is insufficient. You can always see why a part of an implementation exists by temporarily removing it and seeing the example that fails.
 
 That last point is the critical one. Tests written after the fact often pass by accident -- they may not actually cover the logic you intended. You never saw them fail, so you don't know if they *can* fail.
 
@@ -27,7 +27,7 @@ This pattern allows you to write the implementation first (Drafting) to figure o
 **The goal is simple:** to give you a clear boundary between code that is verified (code you've actually seen behave correctly) and code that is still just a sketch. Most of the friction around TDD comes from not knowing when it's "safe" to commit to an idea. This pattern gives you a small, repeatable way to turn uncertain exploratory code into code you can trust.
 
 **How it preserves TDD's benefits:**
-- **Thorough regression safety** -- Every fix is paired with a test that fails without it. No line of code survives without proving its necessity.
+- **Thorough regression safety** -- Every fix is paired with a test that fails without it. No line of code survives without proving its necessity, thereby adhering to the Beyoncé Rule.
 - **No unnecessary code** -- You still only write code to satisfy tests. The draft is just a sketch; verified code still requires an example.
 - **Perspective** -- You still write examples before the fix is "live," keeping you focused on results.
 - **Testability** -- You still bring in tests early, while your design is still easy to change.
