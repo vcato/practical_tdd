@@ -164,7 +164,9 @@ Build up the fix — just enough to not crash:
      assert False
 ```
 
-Run it. The test no longer crashes. Now go back to State III:
+Run it. Passes.
+
+**Enter State III.** Objective: make the test fail.
 
 ```diff
  def calculate_discount(price, is_member):
@@ -175,9 +177,7 @@ Run it. The test no longer crashes. Now go back to State III:
      assert False
 ```
 
-The test still passes. The test isn't verifying behavior yet.
-
-Expand the test:
+The test still passes. The test isn't verifying behavior yet. Expand the test:
 
 ```diff
  def test_calculate_discount():
@@ -185,18 +185,9 @@ Expand the test:
 +    assert calculate_discount(100, False) == 100
 ```
 
-**Verify State III**: Comment out the fix. Fails.
+Run it. Fails as expected.
 
-```diff
- def calculate_discount(price, is_member):
--    if not is_member:
--        return price
-+    # if not is_member:
-+    #     return price
-     assert False
-```
-
-**Verify State IV**: Restore the fix. Test passes. ✓
+**Enter State IV.** Objective: make the test pass.
 
 ```diff
  def calculate_discount(price, is_member):
@@ -207,7 +198,9 @@ Expand the test:
      assert False
 ```
 
-All 4 states verified. State II was implicitly verified when State IV was verified. State I is trivially verified.
+Run it. Passes as expected.
+
+First path verified.
 
 ### 3. Second Test/Fix Pair: Member path
 
@@ -237,7 +230,10 @@ Build up the fix:
 +    return price * 0.9
 ```
 
-Run it. Passes. Now go back to State III:
+Run it. Passes.
+
+
+**Enter State III.** Objective: make the test fail
 
 ```diff
  def calculate_discount(price, is_member):
@@ -258,19 +254,9 @@ Expand the test:
 +    assert calculate_discount(100, True) == 90
 ```
 
-Run it. Passes. State IV objective met.
+Run it. Fails as expected.
 
-**Verify State III**: Comment out the fix, run test. Fails
-
-```diff
- def calculate_discount(price, is_member):
-     if not is_member:
-         return price
--    return price * 0.9
-+    # return price * 0.9
-```
-
-**Verify State IV**: Restore the fix. Test passes. ✓
+**Enter State IV.** Objective: make the test pass.
 
 ```diff
  def calculate_discount(price, is_member):
@@ -280,19 +266,21 @@ Run it. Passes. State IV objective met.
 +    return price * 0.9
 ```
 
+Run it. Passes as expected.
+
+
 Second path verified.
 
 ### 4. Refactor
 
 Both paths verified. Simplify:
 
-```python
-def calculate_discount(price, is_member):
-    return price * 0.9 if is_member else price
-
-def test_calculate_discount():
-    assert calculate_discount(100, False) == 100
-    assert calculate_discount(100, True) == 90
+```diff
+ def calculate_discount(price, is_member):
+-    if not is_member:
+-        return price
+-    return price * 0.9
++    return price * 0.9 if is_member else price
 ```
 
 Tests stay green.
@@ -360,15 +348,15 @@ Build up the fix:
      assert False
 ```
 
-Set `FIX_ON = True`. Run it — no crash. Now go back to State III:
+Set `FIX_ON = True`. Run it. Passes.
+
+**Enter State III.** Objective: make the test fail.
 
 ```python
 FIX_ON = False
 ```
 
-The test still passes. The test isn't verifying behavior yet.
-
-Expand the test:
+The test still passes. The test isn't verifying behavior yet. Expand the test:
 
 ```diff
  def test_tiers():
@@ -377,15 +365,17 @@ Expand the test:
 +        assert get_tier(False) is None
 ```
 
-**Verify State III**: Set `FIX_ON = False`. Fails.
+Run it. Fails as expected.
 
-**Verify State IV**: Set `FIX_ON = True`. Passes. ✓
+**Enter State IV.** Objective: make the test pass.
 
-**Verify all 4 states** by flipping flags:
-- State I: Both False → Green ✓
-- State II: FIX_ON True, TEST_ON False → Green ✓
-- State III: FIX_ON False, TEST_ON True → Red ✓
-- State IV: Both True → Green ✓
+```python
+FIX_ON = True
+```
+
+Run it. Passes as expected.
+
+First path verified.
 
 ### 4. Second Test/Fix Pair: Member path
 
@@ -417,15 +407,15 @@ Build up the fix:
      assert False
 ```
 
-Set `FIX_ON = True`. Run it — no crash. Now go back to State III:
+Set `FIX_ON = True`. Run it. Passes.
+
+**Enter State III.** Objective: make the test fail.
 
 ```python
 FIX_ON = False
 ```
 
-The test still passes. The test isn't verifying behavior yet.
-
-Expand the test:
+The test still passes. The test isn't verifying behavior yet. Expand the test:
 
 ```diff
  def test_tiers():
@@ -435,30 +425,39 @@ Expand the test:
 +        assert get_tier(True) == "silver"
 ```
 
-**Verify State III**: Set `FIX_ON = False`. Fails.
+Run it. Fails as expected.
 
-**Verify State IV**: Set `FIX_ON = True`. Passes. ✓
+**Enter State IV.** Objective: make the test pass.
 
-**Verify all 4 states** by flipping flags:
-- State I: Both False → Green ✓
-- State II: FIX_ON True, TEST_ON False → Green ✓
-- State III: FIX_ON False, TEST_ON True → Red ✓
-- State IV: Both True → Green ✓
+```python
+FIX_ON = True
+```
+
+Run it. Passes as expected.
+
+Second path verified.
 
 ### 5. Cleanup
 
 Remove flags and guards:
 
-```python
-def get_tier(is_member):
-    if is_member:
-        return "silver"
-    return None
+```diff
+ def get_tier(is_member):
+-    if FIX_ON and is_member:
++    if is_member:
+         return "silver"
+     if not is_member:
+         return None
+-    assert False
 
-def test_tiers():
-    assert get_tier(False) is None
-    assert get_tier(True) == "silver"
+ def test_tiers():
+     assert get_tier(False) is None
+-    if TEST_ON:
+-        assert get_tier(True) == "silver"
++    assert get_tier(True) == "silver"
 ```
+
+Tests stay green.
 
 ## Why This Works
 
