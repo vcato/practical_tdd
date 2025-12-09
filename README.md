@@ -357,7 +357,9 @@ With both flags set to `False`, run the tests, and they pass. This verifies Stat
 
 ### 4. Enter State II (fix on, test off)
 
-Turn the fix flag on and run the tests. They pass as expected.
+Turn the fix flag on.
+
+
 
 ```diff
  # --- TEMPORARY SCAFFOLDING ---
@@ -365,6 +367,8 @@ Turn the fix flag on and run the tests. They pass as expected.
 +FIX_GOLD = True
  # -----------------------------
 ```
+
+The tests pass as expected.
 
 
 ### 5. Enter State III (fix off, test on)
@@ -387,7 +391,7 @@ def test_tiered_discounts():
 ```
 
 
-Run the tests, and they fail as expected.
+The tests fail as expected.
 
 ### 6. Enter State IV (fix on, test on)
 
@@ -402,7 +406,7 @@ Turn the fix on.
  # -----------------------------
 ```
 
-Run the tests. They are still failing, due to an assert.  Remove it.
+The tests are still failing, due to an assert.  Remove it.
 
 ```diff
 def _get_member_tier(is_member, years):
@@ -414,7 +418,7 @@ def _get_member_tier(is_member, years):
     return "silver"
 ```
 
-Run the tests. They are still failing, due to an assert.  Remove it.
+The tests are still failing, due to an assert.  Remove it.
 
 ```diff
 def _calculate_discount(price, tier):
@@ -426,7 +430,7 @@ def _calculate_discount(price, tier):
 ```
 
 
-Run the tests. They are passing now.
+The tests are now passing. State IV is verified.
 
 
 ### 7. Cleanup
