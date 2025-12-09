@@ -35,6 +35,8 @@ This pattern allows you to write the implementation first (Drafting) to figure o
 
 This technique doesn't replace [TDD's three laws](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd)—it's a way to follow them when you don't yet know what to test.
 
+*Note: Kent Beck's original TDD formulation emphasizes listing tests upfront but cautions against sketching implementation too early: "If you need an implementation sketch in Sharpie on a napkin, go ahead, but you might not really need it." That's valuable advice—but when you're stuck, drafting the implementation is often the quickest way to break through test paralysis. See [Canon TDD](https://tidyfirst.substack.com/p/canon-tdd).*
+
 ## When to Use This
 
 Don't use this if the test is obvious. If you already know exactly what the test code should look like, and you know the fix is easy, using these toggles will just feel like busywork. This tool is specifically for the moments when you don't yet know what test to write.
@@ -117,6 +119,10 @@ Sketch out your approach — a rough algorithm, not necessarily compilable code.
 # calculate_discount(price, is_member)
 # if not a member, just return the price
 # if a member, take 10% off and return that
+
+# tests:
+# non-member paying 100 should pay 100
+# member paying 100 should pay 90
 ```
 
 This is your target. You'll build toward it one verified step at a time.
@@ -266,6 +272,10 @@ When changes span multiple files, commenting and uncommenting becomes error-pron
 # get_tier(is_member)
 # non-members have no tier (None)
 # members get "silver"
+
+# tests:
+# get_tier(False) -> None
+# get_tier(True) -> "silver"
 ```
 
 ### 2. Set Up Scaffolding
