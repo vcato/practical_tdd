@@ -164,7 +164,7 @@ Build up the fix — just enough to not crash:
      assert False
 ```
 
-Run it. The test no longer crashes. But we need to verify the actual behavior.
+Run it. The test no longer crashes. But check State III—comment out the fix and the test still passes. The test isn't verifying behavior yet.
 
 Expand the test:
 
@@ -225,6 +225,8 @@ Build up the fix:
 -    assert False
 +    return price * 0.9
 ```
+
+Run it. Passes. But check State III—comment out the fix and the test still passes. The test isn't verifying behavior yet.
 
 Expand the test:
 
@@ -337,7 +339,7 @@ Build up the fix:
      assert False
 ```
 
-Set `FIX_ON = True`. Run it — no crash.
+Set `FIX_ON = True`. Run it — no crash. But check State III—set `FIX_ON = False` and the test still passes. The test isn't verifying behavior yet.
 
 Expand the test:
 
@@ -388,7 +390,7 @@ Build up the fix:
      assert False
 ```
 
-Set `FIX_ON = True`. Run it — no crash.
+Set `FIX_ON = True`. Run it — no crash. But check State III—set `FIX_ON = False` and the test still passes. The test isn't verifying behavior yet.
 
 Expand the test:
 
