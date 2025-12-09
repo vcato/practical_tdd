@@ -199,7 +199,7 @@ Run the tests. They pass as expected, so state IV is verified.
 
 We never did anything to invalidate state I, so it's still verified.
 Since state IV is verified, state II is implicitly verified.
-The first text/fix pair is now completely verified.
+The first test/fix pair is now completely verified.
 There's no scaffolding to remove.
 
 ### 3. Second Test/Fix Pair: Member path
@@ -231,7 +231,7 @@ Build up the fix:
 +    return price * 0.9
 ```
 
-Run the tests. They so state IV is verified, but we changed the fix, so we need to re-verify state III.
+The tests pass, so state IV is verified, but we changed the fix, so we need to re-verify state III.
 
 
 **Enter State III.** Objective: make the test fail
@@ -271,8 +271,8 @@ Run the tests. They fail as expected, but now state IV needs to be re-verified.
 
 Run the tests. They pass as expected.
 
-All states are now verfiied, so the test/fix pair is verified.
-There is no scaffolding to remove, so we're done with this test/fix/pair.
+All states are now verfied, so the test/fix pair is verified.
+There is no scaffolding to remove, so we're done with this test/fix pair.
 
 ### 4. Refactor
 
@@ -290,7 +290,7 @@ Tests stay green.
 
 ## Example 2: Multi-Location (The "Flag" Toggle)
 
-When your fix touches multiple locations, commenting and uncommenting becomes error-prone. Using flags let's you turn a single variable on and off to perform multiple changes.
+When your fix touches multiple locations, commenting and uncommenting becomes error-prone. Using flags lets you turn a single variable on and off to perform multiple changes.
 
 ### 1. The Baseline
 
@@ -353,7 +353,7 @@ def test_tiered_discounts():
 +   # assert process_purchase(100, True, 5) == 80   # gold
 ```
 
-With both flags set to `False`, run the tests, and they pass. This verifies State I (both off, green).
+The tests pass, verifying state I.
 
 ### 4. Enter State II (fix on, test off)
 
