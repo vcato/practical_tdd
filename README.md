@@ -33,7 +33,7 @@ This pattern allows you to write the implementation first (Drafting) to figure o
 - **Testability** -- You still bring in tests early, while your design is still easy to change.
 - **Verified Examples** -- State III (fix off, test on) forces you to see the test fail. If it doesn't fail, your example isn't demonstrating what you think it is.
 
-This techinque is really just expanding on [TDD's three laws](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd). We clarify that drafting and experimentation isn't "writing code" in a way that would matter to TDD.
+This technique is just expanding on [TDD's three laws](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd). We clarify that drafting and experimentation isn't "writing code" in a way that would matter to TDD.
 
 *Note: Kent Beck's original TDD formulation emphasizes listing tests upfront but cautions against sketching implementation too early: "If you need an implementation sketch in Sharpie on a napkin, go ahead, but you might not really need it." That's valuable advice, but when you're stuck, drafting the implementation is often the quickest way to break through test paralysis. Don't let his advice push you towards abandoning TDD altogether. See [Canon TDD](https://tidyfirst.substack.com/p/canon-tdd).*
 
@@ -91,13 +91,13 @@ Thinking of all new behavior as fixes keeps you honest: if you don't have an exa
    | **Fix off**    | **State I** (tests pass)   | **State III** (tests fail) |
    | **Fix on**     | **State II** (tests pass)  | **State IV** (tests pass)  |
 
-   Bounce between these states to verify them, until they are all verified with the same test/fix pair:
-   - **State I** (both off, must be green): Stay here while writing inactive code or refactoring — confirms you aren't changing existing behavior.
-   - **State II** (fix on, test off, must be green): Stay here while building the fix. This confirms you're not breaking existing tests. This also catches fixes that are overly broad, changing more behavior than intended. If you change the fix, you need to re-verify state IV if you've verified it already.
-   - **State III** (fix off, test on, must be red): Build test code here until the test fails as expected. This confirms the test actually detects missing behavior. If you change the test here, you need to re-verify state IV if you've verified it already.
-   - **State IV** (both on, must be green): Adjust the test and the fix here until the tests pass. If you change the test, you need to re-verify state III if you've verified it already.
+   Visit these states in whatever order helps you, there's no required sequence. A state is "verified" when you run the tests and see the expected result (green or red). Verify each state before considering the test/fix pair complete:
+   - **State I** (both off, must be green): Objective: confirm you aren't changing existing behavior and that your activation mechanism is working properly. Stay here while writing inactive code or refactoring.
+   - **State II** (fix on, test off, must be green): Objective: confirm the fix doesn't have unintended side-effects. You can stay here while building the fix. If you change the fix, re-verify State IV.
+   - **State III** (fix off, test on, must be red): Objective: confirm the test detects missing behavior. You can build test code here until the test fails as expected. If you change the test, re-verify State IV.
+   - **State IV** (both on, must be green): Objective: confirm the fix satisfies the test. Adjust the test and fix here until tests pass. If you change the test, re-verify State III.
 
-   You only re-verify a state if you've changed what it depends on: State II depends on the fix, State III depends on the test, State IV depends on both.
+   You only re-verify a state if you've changed what it depends on since it was last verified: State II depends on the fix, State III depends on the test, State IV depends on both.
 
 5. **Remove the scaffolding**
     - If you used flags, bake them in and simplify.
@@ -349,6 +349,8 @@ def test_tiered_discounts():
     if TEST_GOLD:
         assert process_purchase(100, True, 5) == 80   # gold
 ```
+
+With both flags set to `False`, run the tests. They pass—this verifies State I (both off, green) and State II is trivially satisfied since the fix code exists but is inactive.
 
 ### 3. Enter State III (fix off, test on)
 
