@@ -322,7 +322,6 @@ Now we're adding gold tier for members with 5+ years. Write the code you want, g
 ```python
 # --- TEMPORARY SCAFFOLDING ---
 FIX_GOLD = False
-TEST_GOLD = False
 # -----------------------------
 
 # Location A: Tier logic (private)
@@ -351,8 +350,7 @@ def process_purchase(price, is_member, years):
 def test_tiered_discounts():
     assert process_purchase(100, False, 0) == 100
     assert process_purchase(100, True, 3) == 90   # silver
-    if TEST_GOLD:
-        assert process_purchase(100, True, 5) == 80   # gold
+    # assert process_purchase(100, True, 5) == 80   # gold
 ```
 
 With both flags set to `False`, run the tests, and they pass. This verifies State I (both off, green).
@@ -363,9 +361,8 @@ Turn the fix flag on and run the tests. They pass as expected.
 
 ```diff
  # --- TEMPORARY SCAFFOLDING ---
- FIX_GOLD = False
--TEST_GOLD = False
-+TEST_GOLD = True
+-FIX_GOLD = False
++FIX_GOLD = True
  # -----------------------------
 ```
 
@@ -378,10 +375,17 @@ Turn the fix off and the test on.
  # --- TEMPORARY SCAFFOLDING ---
 -FIX_GOLD = True
 +FIX_GOLD = False
--TEST_GOLD = False
-+TEST_GOLD = True
  # -----------------------------
 ```
+
+```diff
+def test_tiered_discounts():
+    assert process_purchase(100, False, 0) == 100
+    assert process_purchase(100, True, 3) == 90   # silver
+-   # assert process_purchase(100, True, 5) == 80   # gold
++   assert process_purchase(100, True, 5) == 80   # gold
+```
+
 
 Run the tests, and they fail as expected.
 
@@ -395,7 +399,6 @@ Turn the fix on.
  # --- TEMPORARY SCAFFOLDING ---
 -FIX_GOLD = False
 +FIX_GOLD = True
- TEST_GOLD = True
  # -----------------------------
 ```
 
@@ -416,7 +419,7 @@ Run the tests. They are still failing, due to an assert.  Remove it.
 ```diff
 def _calculate_discount(price, tier):
     if FIX_GOLD:
--        assert False # not tested
+-       assert False # not tested
         if tier == "gold": return price * 0.8
     if tier == "silver": return price * 0.9
     return price
@@ -433,7 +436,6 @@ Remove flags and guards:
 ```diff
 -# --- TEMPORARY SCAFFOLDING ---
 -FIX_GOLD = True
--TEST_GOLD = True
 -# -----------------------------
 
  def _get_member_tier(is_member, years):
@@ -450,17 +452,6 @@ Remove flags and guards:
 +    if tier == "gold": return price * 0.8
      if tier == "silver": return price * 0.9
      return price
-
- def process_purchase(price, is_member, years):
-     tier = _get_member_tier(is_member, years)
-     return _calculate_discount(price, tier)
-
- def test_tiered_discounts():
-     assert process_purchase(100, False, 0) == 100
-     assert process_purchase(100, True, 3) == 90   # silver
--    if TEST_GOLD:
--        assert process_purchase(100, True, 5) == 80   # gold
-+    assert process_purchase(100, True, 5) == 80   # gold
 ```
 
 Tests stay green.
