@@ -39,7 +39,7 @@ This techinque is really just expanding on [TDD's three laws](http://butunclebob
 
 ## When to Use This
 
-Don't use this if the test is obvious. If you already know exactly what the test code should look like, and you know the fix is easy, using these toggles will just feel like busywork. This tool is specifically for the moments when you don't yet know what test to write.
+Don't use this if the test is obvious. If you already know exactly what the test code should look like, and you know the fix is easy, using these toggles will just feel like busywork. This tool is specifically for the moments when you don't yet know what test to write, or it may require iteration.
 
 **Use this technique when you get stuck:**
 - You don't know what API makes sense yet
