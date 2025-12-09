@@ -35,7 +35,7 @@ This pattern allows you to write the implementation first (Drafting) to figure o
 
 This technique doesn't replace [TDD's three laws](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd)—it's a way to follow them when you don't yet know what to test.
 
-*Note: Kent Beck's original TDD formulation emphasizes listing tests upfront but cautions against sketching implementation too early: "If you need an implementation sketch in Sharpie on a napkin, go ahead, but you might not really need it." That's valuable advice—but when you're stuck, drafting the implementation is often the quickest way to break through test paralysis. Don't let his advance push you towards abandoning TDD altogether. See [Canon TDD](https://tidyfirst.substack.com/p/canon-tdd).*
+*Note: Kent Beck's original TDD formulation emphasizes listing tests upfront but cautions against sketching implementation too early: "If you need an implementation sketch in Sharpie on a napkin, go ahead, but you might not really need it." That's valuable advice—but when you're stuck, drafting the implementation is often the quickest way to break through test paralysis. Don't let his advice push you towards abandoning TDD altogether. See [Canon TDD](https://tidyfirst.substack.com/p/canon-tdd).*
 
 ## When to Use This
 
@@ -134,6 +134,9 @@ Start with a stub that crashes on any unhandled path:
 ```python
 def calculate_discount(price, is_member):
     assert False
+
+def test_calculate_discount():
+    pass
 ```
 
 Look at your draft. "If not a member, just return the price" — that's a path you can implement.
@@ -142,7 +145,7 @@ Look at your draft. "If not a member, just return the price" — that's a path y
 
 Build up the test — just enough to hit the assert:
 ```python
-def test_non_member_pays_full_price():
+def test_calculate_discount():
     calculate_discount(100, False)
 ```
 
@@ -162,7 +165,7 @@ Run it. The test no longer crashes. But we need to verify the actual behavior.
 
 Expand the test:
 ```python
-def test_non_member_pays_full_price():
+def test_calculate_discount():
     assert calculate_discount(100, False) == 100
 ```
 
@@ -177,37 +180,41 @@ Run it. Passes. State IV objective met.
       #     return price
       assert False
 
-  # def test_non_member_pays_full_price():
-  #     assert calculate_discount(100, False) == 100
+  def test_calculate_discount():
+      pass
   ```
 
 - **State II** (fix on, test off): Green — fix doesn't break anything.
-  ```diff
-  -     # if not is_member:
-  -     #     return price
-  +     if not is_member:
-  +         return price
+  ```python
+  def calculate_discount(price, is_member):
+      if not is_member:
+          return price
+      assert False
+
+  def test_calculate_discount():
+      pass
   ```
 
 - **State III** (fix off, test on): Red — test hits `assert False`.
-  ```diff
-  -     if not is_member:
-  -         return price
-  +     # if not is_member:
-  +     #     return price
+  ```python
+  def calculate_discount(price, is_member):
+      # if not is_member:
+      #     return price
+      assert False
 
-  - # def test_non_member_pays_full_price():
-  - #     assert calculate_discount(100, False) == 100
-  + def test_non_member_pays_full_price():
-  +     assert calculate_discount(100, False) == 100
+  def test_calculate_discount():
+      assert calculate_discount(100, False) == 100
   ```
 
 - **State IV** (both on): Green — test passes.
-  ```diff
-  -     # if not is_member:
-  -     #     return price
-  +     if not is_member:
-  +         return price
+  ```python
+  def calculate_discount(price, is_member):
+      if not is_member:
+          return price
+      assert False
+
+  def test_calculate_discount():
+      assert calculate_discount(100, False) == 100
   ```
 
 First path verified.
@@ -218,9 +225,10 @@ Look at the draft. "If a member, take 10% off" — next path.
 
 **Enter State III.** Objective: make the test fail.
 
-Build up the test — just enough to hit the assert:
+Add to the test — just enough to hit the assert:
 ```python
-def test_member_gets_discount():
+def test_calculate_discount():
+    assert calculate_discount(100, False) == 100  # already verified
     calculate_discount(100, True)
 ```
 
@@ -238,7 +246,8 @@ def calculate_discount(price, is_member):
 
 Expand the test:
 ```python
-def test_member_gets_discount():
+def test_calculate_discount():
+    assert calculate_discount(100, False) == 100
     assert calculate_discount(100, True) == 90
 ```
 
@@ -246,8 +255,8 @@ Run it. Passes. State IV objective met.
 
 **Verify all 4 states** using comments as the activation mechanism:
 
-- **State III**: Replace `return price * 0.9` with `assert False`, run both tests. New test crashes. ✓
-- **State IV**: Restore `return price * 0.9`. Both tests pass. ✓
+- **State III**: Replace `return price * 0.9` with `assert False`, run test. Test crashes on second assertion. ✓
+- **State IV**: Restore `return price * 0.9`. Test passes. ✓
 
 Second path verified.
 
@@ -258,6 +267,10 @@ Both paths verified. Simplify:
 ```python
 def calculate_discount(price, is_member):
     return price * 0.9 if is_member else price
+
+def test_calculate_discount():
+    assert calculate_discount(100, False) == 100
+    assert calculate_discount(100, True) == 90
 ```
 
 Tests stay green.
