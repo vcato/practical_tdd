@@ -16,22 +16,15 @@ Before abandoning TDD, it's worth understanding what you'd lose:
 - **No unnecessary code** -- Every line of the implementation has an example to go with it. If you can't point to an example that requires the extra complexity, you don't write it.
 - **Perspective** -- Thinking about examples of how your implementation will be used early on helps make sure you stay focused on results.
 - **Testability** -- Thinking about examples early helps you think about testability early, making sure your tests are clear and straightforward instead of having to work around a poor design.
-- **Verified Examples** -- You don't just write the examples. You show that each example actually demonstrates a problem when the implementation is insufficient. You can always see why a part of an implementation exists by temporarily removing it and seeing the example that fails.
+- **Verified Examples** -- You don't just write the examples. You show that each example actually demonstrates a problem when the implementation is insufficient. You can always see why a part of an implementation exists by temporarily removing it and seeing an example that fails.
 
 That last point is the critical one. Tests written after the fact often pass by accident -- they may not actually cover the logic you intended. You never saw them fail, so you don't know if they *can* fail.
 
 ## The Solution
 
-This pattern allows you to write the implementation first (Drafting) to figure out your design, then uses a simple toggle trick to provide many of the same benefits as strictly writing the examples first.
+The approach presented here allows you to write the implementation first (Drafting) to figure out your design, then uses a simple toggle trick to provide many of the same benefits as strictly writing the examples first.
 
 **The goal is simple:** to give you a clear boundary between code that is verified (code you've actually seen behave correctly) and code that is still just a sketch. Most of the friction around TDD comes from not knowing when it's "safe" to commit to an idea. This pattern gives you a small, repeatable way to turn uncertain exploratory code into code you can trust.
-
-**How it preserves TDD's benefits:**
-- **Thorough regression safety** -- Every fix is paired with a test that fails without it. No line of code survives without proving its necessity, thereby adhering to the Beyoncé Rule.
-- **No unnecessary code** -- You still only write code to satisfy tests. The draft is just a sketch; verified code still requires an example.
-- **Perspective** -- You still write examples before the fix is "live," keeping you focused on results.
-- **Testability** -- You still bring in tests early, while your design is still easy to change.
-- **Verified Examples** -- State III (fix off, test on) forces you to see the test fail. If it doesn't fail, your example isn't demonstrating what you think it is.
 
 This technique is just expanding on [TDD's three laws](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd). We clarify that drafting and experimentation isn't "writing code" in a way that would matter to TDD.
 
@@ -55,8 +48,8 @@ You're not abandoning TDD, you're just allowing yourself a sketch phase, then fo
 
 In TDD, all behavior exists because you have an example of why you need it. You have the fewest examples that fully demonstrate the desired behavior, and you have the simplest implementation that satisfies these examples. We break the examples and implementation into tiny pieces called tests and fixes:
 
-**Test:** An example of the desired behavior
-**Fix:** An implementation of the desired behavior
+- **Test:** An example of the desired behavior
+- **Fix:** An implementation of the desired behavior
 
 Thinking of all new behavior as fixes keeps you honest: if you don't have an example of why you need some part of the implementation, then why are you writing it?
 
