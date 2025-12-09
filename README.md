@@ -75,6 +75,7 @@ Thinking of all new behavior as fixes keeps you honest: if you don't have an exa
      - Commenting out the code to turn it off, uncommenting it to turn it on
      - Using a preprocessor flag that guards the change and turning it on or off
      - Using test framework options, like a "skip" flag for a test.
+     - **Undo/Redo (for very simple changes):** Temporarily cut (Ctrl-X / Cmd-X) a line of code to "turn it off," run tests, then paste it back (Ctrl-V / Cmd-V) to "turn it on." This provides quick verification without needing to clean up comments or flags.
    - Use whatever approach makes sense to you for switching the fix and the test on and off.
 
 4. **Use a 4-state verification matrix to build up a test/fix pair**
