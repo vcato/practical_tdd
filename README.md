@@ -169,55 +169,20 @@ def test_calculate_discount():
     assert calculate_discount(100, False) == 100
 ```
 
-Run it. Passes. State IV objective met.
+**Re-enter State III** (fix off, test on). Comment out the fix and verify the expanded test fails without it.
 
-**Now verify all 4 states with the same test/fix pair.** Use comments as the activation mechanism:
+```python
+def calculate_discount(price, is_member):
+    # if not is_member:
+    #     return price
+    assert False
+```
 
-- **State I** (both off): Green — existing tests pass
-  ```python
-  def calculate_discount(price, is_member):
-      # if not is_member:
-      #     return price
-      assert False
+Run it. It hits `assert False`. State III still holds — the test fails without the fix.
 
-  def test_calculate_discount():
-      pass
-  ```
+**Return to State IV** (fix on, test on). Uncomment the fix. Run it. Passes. State IV objective met.
 
-- **State II** (fix on, test off): Green — fix doesn't break anything.
-  ```python
-  def calculate_discount(price, is_member):
-      if not is_member:
-          return price
-      assert False
-
-  def test_calculate_discount():
-      pass
-  ```
-
-- **State III** (fix off, test on): Red — test hits `assert False`.
-  ```python
-  def calculate_discount(price, is_member):
-      # if not is_member:
-      #     return price
-      assert False
-
-  def test_calculate_discount():
-      assert calculate_discount(100, False) == 100
-  ```
-
-- **State IV** (both on): Green — test passes.
-  ```python
-  def calculate_discount(price, is_member):
-      if not is_member:
-          return price
-      assert False
-
-  def test_calculate_discount():
-      assert calculate_discount(100, False) == 100
-  ```
-
-First path verified.
+Now we've verified all 4 states with the same test/fix pair. There is no scaffolding to remove at this point, so we are done with this pair. State II was implicitly verified when State IV was verified. State I is trivially verified.
 
 ### 3. Second Test/Fix Pair: Member path
 
@@ -347,7 +312,11 @@ def test_tiers():
         assert get_tier(False) is None
 ```
 
-Run it. Passes. State IV objective met.
+**Re-enter State III** (FIX_ON = False, TEST_ON = True). Set `FIX_ON = False` and verify the expanded test fails without the fix.
+
+Run it. It hits `assert False`. State III still holds — the test fails without the fix.
+
+**Return to State IV** (FIX_ON = True, TEST_ON = True). Set `FIX_ON = True`. Run it. Passes. State IV objective met.
 
 **Verify all 4 states** by flipping flags:
 - State I: Both False → Green ✓
@@ -396,7 +365,11 @@ def test_tiers():
         assert get_tier(True) == "silver"
 ```
 
-Run it. Passes. State IV objective met.
+**Re-enter State III** (FIX_ON = False, TEST_ON = True). Set `FIX_ON = False` and verify the expanded test fails without the fix.
+
+Run it. It hits `assert False`. State III still holds — the test fails without the fix.
+
+**Return to State IV** (FIX_ON = True, TEST_ON = True). Set `FIX_ON = True`. Run it. Passes. State IV objective met.
 
 **Verify all 4 states** by flipping flags:
 - State I: Both False → Green ✓
