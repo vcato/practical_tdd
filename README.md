@@ -319,25 +319,25 @@ def test_tiered_discounts():
 
 Now we're adding gold tier for members with 5+ years. Write the code you want, guarded by flags:
 
-```python
-# --- TEMPORARY SCAFFOLDING ---
-FIX_GOLD = False
-# -----------------------------
+```diff
++# --- TEMPORARY SCAFFOLDING ---
++FIX_GOLD = False
++# -----------------------------
 
 # Location A: Tier logic (private)
 def _get_member_tier(is_member, years):
     if not is_member:
         return None
-    if FIX_GOLD:
-        assert False # not tested
-        if years >= 5: return "gold"
++   if FIX_GOLD:
++       assert False # not tested
++       if years >= 5: return "gold"
     return "silver"
 
 # Location B: Discount logic (private)
 def _calculate_discount(price, tier):
-    if FIX_GOLD:
-        assert False # not tested
-        if tier == "gold": return price * 0.8
++   if FIX_GOLD:
++       assert False # not tested
++       if tier == "gold": return price * 0.8
     if tier == "silver": return price * 0.9
     return price
 
@@ -350,7 +350,7 @@ def process_purchase(price, is_member, years):
 def test_tiered_discounts():
     assert process_purchase(100, False, 0) == 100
     assert process_purchase(100, True, 3) == 90   # silver
-    # assert process_purchase(100, True, 5) == 80   # gold
++   # assert process_purchase(100, True, 5) == 80   # gold
 ```
 
 With both flags set to `False`, run the tests, and they pass. This verifies State I (both off, green).
