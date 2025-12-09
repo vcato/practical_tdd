@@ -63,19 +63,19 @@ Thinking of all new behavior as fixes keeps you honest: if you don't have an exa
    - Do your drafting in any order and level of detail that helps you understand what you are trying to solve.
    - Sketch the logic you think will work — this can be pseudocode, comments, notes, or real code
    - Sketch the tests you think would verify it — same flexibility applies
-   - Think through the design. Revise. Explore. Make sure it is clear that what you are writing is not the final production code.
+   - Think through the design. Revise. Explore. Make sure it is clear that what you are writing is not the final production code and tests.
 
 2. **Pick one line from your draft**
    - Look at a line you wrote. Ask: "What is this trying to do? What's the simplest example that would fail without it?"
    - That example is your test. The code to make it pass is your fix.
 
 3. **Choose an activation mechanism**
-   - Decide how you are going to turn the fix and test off and on.
+   - Decide how you are going to turn the fix and test on and off.
    - This can be
      - Commenting out the code to turn it off, uncommenting it to turn it on
      - Using a preprocessor flag that guards the change and turning it on or off
      - Using test framework options, like a "skip" flag for a test.
-   - Use whatever approach makes sense to you for switching the fix and the test off and on.
+   - Use whatever approach makes sense to you for switching the fix and the test on and off.
 
 4. **Use a 4-state verification matrix to build up a test/fix pair**
 
@@ -100,7 +100,7 @@ Thinking of all new behavior as fixes keeps you honest: if you don't have an exa
 
 ---
 
-*Note: In practice, these are tiny edits and quick toggles—seconds each, not minutes. The examples below are verbose because static documentation can't show the rapid, iterative rhythm of the actual workflow.*
+*Note: In practice, these are tiny edits and quick toggles. Each change should take seconds, not minutes. The examples below are verbose because static documentation can't show the rapid, iterative rhythm of the actual workflow.*
 
 ## Example 1: Building Incrementally
 
@@ -118,7 +118,7 @@ Sketch out your approach — a rough algorithm, not necessarily compilable code.
 # member paying 100 should pay 90
 ```
 
-This is your target. You'll build toward it one verified step at a time.
+This is your target. You'll build toward it, one verified step at a time.
 
 ### 2. First Test/Fix Pair: Non-member path
 
@@ -157,9 +157,11 @@ Build up the fix — just enough to not crash:
      assert False
 ```
 
-Run it. Passes.
+Run the tests  They pass, so state IV is verified, but we've changed the fix, so we need to re-verify state III.
 
 **Enter State III.** Objective: make the test fail.
+
+Deactivate the fix:
 
 ```diff
  def calculate_discount(price, is_member):
@@ -178,9 +180,11 @@ The test still passes. The test isn't verifying behavior yet. Expand the test:
 +    assert calculate_discount(100, False) == 100
 ```
 
-Run it. Fails as expected.
+Run the tests. They fail as expected, so state III is verified, but we've changed the test, so we need to re-verify state IV.
 
 **Enter State IV.** Objective: make the test pass.
+
+Activate the fix:
 
 ```diff
  def calculate_discount(price, is_member):
@@ -191,9 +195,12 @@ Run it. Fails as expected.
      assert False
 ```
 
-Run it. Passes as expected.
+Run the tests. They pass as expected, so state IV is verified.
 
-First path verified.
+We never did anything to invalidate state I, so it's still verified.
+Since state IV is verified, state II is implicitly verified.
+The first text/fix pair is now completely verified.
+There's no scaffolding to remove.
 
 ### 3. Second Test/Fix Pair: Member path
 
@@ -201,7 +208,8 @@ Look at the draft. "If a member, take 10% off" — next path.
 
 **Enter State III.** Objective: make the test fail.
 
-Add to the test — just enough to hit the assert:
+Add a small amount to the test until the failure is due to the production code
+not being right:
 
 ```diff
  def test_calculate_discount():
@@ -209,7 +217,7 @@ Add to the test — just enough to hit the assert:
 +    calculate_discount(100, True)
 ```
 
-Run it. Crashes on `assert False`. State III objective met.
+Run the tests, and they crash on `assert False`. The state III objective is met.
 
 **Enter State IV.** Objective: make the test pass.
 
@@ -223,10 +231,12 @@ Build up the fix:
 +    return price * 0.9
 ```
 
-Run it. Passes.
+Run the tests. They so state IV is verified, but we changed the fix, so we need to re-verify state III.
 
 
 **Enter State III.** Objective: make the test fail
+
+Deactivate the fix:
 
 ```diff
  def calculate_discount(price, is_member):
@@ -236,7 +246,7 @@ Run it. Passes.
 +    # return price * 0.9
 ```
 
-The test still passes. The test isn't verifying behavior yet.
+The test still passes, so the test isn't verifying behavior yet.
 
 Expand the test:
 
@@ -247,7 +257,7 @@ Expand the test:
 +    assert calculate_discount(100, True) == 90
 ```
 
-Run it. Fails as expected.
+Run the tests. They fail as expected, but now state IV needs to be re-verified.
 
 **Enter State IV.** Objective: make the test pass.
 
@@ -259,14 +269,14 @@ Run it. Fails as expected.
 +    return price * 0.9
 ```
 
-Run it. Passes as expected.
+Run the tests. They pass as expected.
 
-
-Second path verified.
+All states are now verfiied, so the test/fix pair is verified.
+There is no scaffolding to remove, so we're done with this test/fix/pair.
 
 ### 4. Refactor
 
-Both paths verified. Simplify:
+We're always looking for refactoring opportunities. This one might be worth it:
 
 ```diff
  def calculate_discount(price, is_member):
@@ -280,7 +290,7 @@ Tests stay green.
 
 ## Example 2: Multi-Location (The "Flag" Toggle)
 
-When your fix touches multiple locations, commenting and uncommenting becomes error-prone. Use flags — flip a single variable to toggle all the pieces at once.
+When your fix touches multiple locations, commenting and uncommenting becomes error-prone. Using flags let's you turn a single variable on and off to perform multiple changes.
 
 ### 1. The Baseline
 
@@ -320,12 +330,14 @@ def _get_member_tier(is_member, years):
     if not is_member:
         return None
     if FIX_GOLD:
+        assert False # not tested
         if years >= 5: return "gold"
     return "silver"
 
 # Location B: Discount logic (private)
 def _calculate_discount(price, tier):
     if FIX_GOLD:
+        assert False # not tested
         if tier == "gold": return price * 0.8
     if tier == "silver": return price * 0.9
     return price
@@ -343,11 +355,11 @@ def test_tiered_discounts():
         assert process_purchase(100, True, 5) == 80   # gold
 ```
 
-With both flags set to `False`, run the tests. They pass—this verifies State I (both off, green) and State II is trivially satisfied since the fix code exists but is inactive.
+With both flags set to `False`, run the tests, and they pass. This verifies State I (both off, green).
 
-### 3. Enter State III (fix off, test on)
+### 4. Enter State II (fix on, test off)
 
-Objective: make the test fail.
+Turn the fix flag on and run the tests. They pass as expected.
 
 ```diff
  # --- TEMPORARY SCAFFOLDING ---
@@ -357,11 +369,27 @@ Objective: make the test fail.
  # -----------------------------
 ```
 
-Run it. Fails as expected.
 
-### 4. Enter State IV (fix on, test on)
+### 5. Enter State III (fix off, test on)
+
+Turn the fix off and the test on.
+
+```diff
+ # --- TEMPORARY SCAFFOLDING ---
+-FIX_GOLD = True
++FIX_GOLD = False
+-TEST_GOLD = False
++TEST_GOLD = True
+ # -----------------------------
+```
+
+Run the tests, and they fail as expected.
+
+### 6. Enter State IV (fix on, test on)
 
 Objective: make the test pass.
+
+Turn the fix on.
 
 ```diff
  # --- TEMPORARY SCAFFOLDING ---
@@ -371,9 +399,34 @@ Objective: make the test pass.
  # -----------------------------
 ```
 
-Run it. Passes as expected.
+Run the tests. They are still failing, due to an assert.  Remove it.
 
-### 5. Cleanup
+```diff
+def _get_member_tier(is_member, years):
+    if not is_member:
+        return None
+    if FIX_GOLD:
+-       assert False # not tested
+        if years >= 5: return "gold"
+    return "silver"
+```
+
+Run the tests. They are still failing, due to an assert.  Remove it.
+
+```diff
+def _calculate_discount(price, tier):
+    if FIX_GOLD:
+-        assert False # not tested
+        if tier == "gold": return price * 0.8
+    if tier == "silver": return price * 0.9
+    return price
+```
+
+
+Run the tests. They are passing now.
+
+
+### 7. Cleanup
 
 Remove flags and guards:
 
@@ -388,9 +441,8 @@ Remove flags and guards:
          return None
 -    if FIX_GOLD:
 -        if years >= 5: return "gold"
--    return "silver"
 +    if years >= 5: return "gold"
-+    return "silver"
+     return "silver"
 
  def _calculate_discount(price, tier):
 -    if FIX_GOLD:
