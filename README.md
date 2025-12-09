@@ -33,7 +33,7 @@ This pattern allows you to write the implementation first (Drafting) to figure o
 - **Testability** -- You still bring in tests early, while your design is still easy to change.
 - **Verified Examples** -- State III (fix off, test on) forces you to see the test fail. If it doesn't fail, your example isn't demonstrating what you think it is.
 
-This technique doesn't replace [TDD's three laws](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd)—it's a way to follow them when you don't yet know what to test.
+This techinque is really just expanding on [TDD's three laws](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd). Wwe clarify that drafting and experimentation isn't "writing code" in a way that would matter to TDD.
 
 *Note: Kent Beck's original TDD formulation emphasizes listing tests upfront but cautions against sketching implementation too early: "If you need an implementation sketch in Sharpie on a napkin, go ahead, but you might not really need it." That's valuable advice—but when you're stuck, drafting the implementation is often the quickest way to break through test paralysis. Don't let his advice push you towards abandoning TDD altogether. See [Canon TDD](https://tidyfirst.substack.com/p/canon-tdd).*
 
@@ -93,9 +93,9 @@ Thinking of all new behavior as fixes keeps you honest: if you don't have an exa
 
    Bounce between these states to verify them, until they are all verified with the same test/fix pair:
    - **State I** (both off, must be green): Stay here while writing inactive code or refactoring — confirms you aren't changing existing behavior.
-   - **State II** (fix on, test off, must be green): Stay here while building the fix — confirms you're not breaking existing tests. This also catches fixes that are overly broad, changing more behavior than intended.
-   - **State III** (fix off, test on, must be red): Build test code here until the test fails as expected — confirms the test actually detects missing behavior.
-   - **State IV** (both on, must be green): Build fix code here until tests pass — confirms the fix works.
+   - **State II** (fix on, test off, must be green): Stay here while building the fix. This confirms you're not breaking existing tests. This also catches fixes that are overly broad, changing more behavior than intended. If you change the fix, you need to re-verify state IV if you've verified it already.
+   - **State III** (fix off, test on, must be red): Build test code here until the test fails as expected. This confirms the test actually detects missing behavior. If you change the test here, you need to re-verify state IV if you've verified it already.
+   - **State IV** (both on, must be green): Adjust the test and the fix here until the tests pass. If you change the test, you need to re-verify state III if you've verified it already.
 
    You only re-verify a state if you've changed what it depends on: State II depends on the fix, State III depends on the test, State IV depends on both.
 
