@@ -287,174 +287,133 @@ Tests stay green.
 
 ## Example 2: Multi-Location (The "Flag" Toggle)
 
-When changes span multiple files, commenting and uncommenting becomes error-prone. Use flags — flip a single variable to toggle all the pieces.
+When your fix touches multiple locations, commenting and uncommenting becomes error-prone. Use flags — flip a single variable to toggle all the pieces at once.
 
-### 1. The Draft
+### 1. The Baseline
 
+A system with silver tier discounts already exists:
+
+```python
+def _get_member_tier(is_member):
+    if not is_member:
+        return None
+    return "silver"
+
+def _calculate_discount(price, tier):
+    if tier == "silver": return price * 0.9
+    return price
+
+def process_purchase(price, is_member):
+    tier = _get_member_tier(is_member)
+    return _calculate_discount(price, tier)
+
+def test_tiered_discounts():
+    assert process_purchase(100, False) == 100
+    assert process_purchase(100, True) == 90   # silver
 ```
-# get_tier(is_member)
-# non-members have no tier (None)
-# members get "silver"
 
-# tests:
-# get_tier(False) -> None
-# get_tier(True) -> "silver"
-```
+### 2. The Draft
 
-### 2. Set Up Scaffolding
+Now we're adding gold tier for members with 5+ years. Write the code you want, guarded by flags:
 
 ```python
 # --- TEMPORARY SCAFFOLDING ---
-FIX_ON = False
-TEST_ON = False
+FIX_GOLD = False
+TEST_GOLD = False
 # -----------------------------
+
+# Location A: Tier logic (private)
+def _get_member_tier(is_member, years):
+    if not is_member:
+        return None
+    if FIX_GOLD:
+        if years >= 5: return "gold"
+    return "silver"
+
+# Location B: Discount logic (private)
+def _calculate_discount(price, tier):
+    if FIX_GOLD:
+        if tier == "gold": return price * 0.8
+    if tier == "silver": return price * 0.9
+    return price
+
+# Public API
+def process_purchase(price, is_member, years):
+    tier = _get_member_tier(is_member, years)
+    return _calculate_discount(price, tier)
+
+# Location C: The test
+def test_tiered_discounts():
+    assert process_purchase(100, False, 0) == 100
+    assert process_purchase(100, True, 3) == 90   # silver
+    if TEST_GOLD:
+        assert process_purchase(100, True, 5) == 80   # gold
 ```
 
-Place this where both logic and tests can access it.
+### 3. Enter State III (fix off, test on)
 
-### 3. First Test/Fix Pair: Non-member path
-
-Start with a stub:
-
-```python
-def get_tier(is_member):
-    assert False
-
-def test_tiers():
-    pass
-```
-
-**Enter State III** (FIX_ON = False, TEST_ON = True). Objective: make the test fail.
-
-Build up the test — just enough to hit the assert:
+Objective: make the test fail.
 
 ```diff
- def test_tiers():
--    pass
-+    if TEST_ON:
-+        get_tier(False)
-```
-
-Set `TEST_ON = True`. Run it — crashes on `assert False`. State III objective met.
-
-**Enter State IV** (FIX_ON = True, TEST_ON = True). Objective: make the test pass.
-
-Build up the fix:
-
-```diff
- def get_tier(is_member):
-+    if FIX_ON and not is_member:
-+        return None
-     assert False
-```
-
-Set `FIX_ON = True`. Run it. Passes.
-
-**Enter State III.** Objective: make the test fail.
-
-```python
-FIX_ON = False
-```
-
-The test still passes. The test isn't verifying behavior yet. Expand the test:
-
-```diff
- def test_tiers():
-     if TEST_ON:
--        get_tier(False)
-+        assert get_tier(False) is None
+ # --- TEMPORARY SCAFFOLDING ---
+ FIX_GOLD = False
+-TEST_GOLD = False
++TEST_GOLD = True
+ # -----------------------------
 ```
 
 Run it. Fails as expected.
 
-**Enter State IV.** Objective: make the test pass.
+### 4. Enter State IV (fix on, test on)
 
-```python
-FIX_ON = True
+Objective: make the test pass.
+
+```diff
+ # --- TEMPORARY SCAFFOLDING ---
+-FIX_GOLD = False
++FIX_GOLD = True
+ TEST_GOLD = True
+ # -----------------------------
 ```
 
 Run it. Passes as expected.
-
-First path verified.
-
-### 4. Second Test/Fix Pair: Member path
-
-Reset flags for the new pair: `FIX_ON = False`, `TEST_ON = False`.
-
-**Enter State III.** Objective: make the test fail.
-
-Add to the test — just enough to hit the assert:
-
-```diff
- def test_tiers():
-     assert get_tier(False) is None
-+    if TEST_ON:
-+        get_tier(True)
-```
-
-Set `TEST_ON = True`. Run it — crashes on `assert False`. State III objective met.
-
-**Enter State IV.** Objective: make the test pass.
-
-Build up the fix:
-
-```diff
- def get_tier(is_member):
-+    if FIX_ON and is_member:
-+        return "silver"
-     if not is_member:
-         return None
-     assert False
-```
-
-Set `FIX_ON = True`. Run it. Passes.
-
-**Enter State III.** Objective: make the test fail.
-
-```python
-FIX_ON = False
-```
-
-The test still passes. The test isn't verifying behavior yet. Expand the test:
-
-```diff
- def test_tiers():
-     assert get_tier(False) is None
-     if TEST_ON:
--        get_tier(True)
-+        assert get_tier(True) == "silver"
-```
-
-Run it. Fails as expected.
-
-**Enter State IV.** Objective: make the test pass.
-
-```python
-FIX_ON = True
-```
-
-Run it. Passes as expected.
-
-Second path verified.
 
 ### 5. Cleanup
 
 Remove flags and guards:
 
 ```diff
- def get_tier(is_member):
--    if FIX_ON and is_member:
-+    if is_member:
-         return "silver"
+-# --- TEMPORARY SCAFFOLDING ---
+-FIX_GOLD = True
+-TEST_GOLD = True
+-# -----------------------------
+
+ def _get_member_tier(is_member, years):
      if not is_member:
          return None
--    assert False
+-    if FIX_GOLD:
+-        if years >= 5: return "gold"
+-    return "silver"
++    if years >= 5: return "gold"
++    return "silver"
 
- def test_tiers():
-     assert get_tier(False) is None
--    if TEST_ON:
--        assert get_tier(True) == "silver"
-+    assert get_tier(True) == "silver"
+ def _calculate_discount(price, tier):
+-    if FIX_GOLD:
+-        if tier == "gold": return price * 0.8
++    if tier == "gold": return price * 0.8
+     if tier == "silver": return price * 0.9
+     return price
+
+ def process_purchase(price, is_member, years):
+     tier = _get_member_tier(is_member, years)
+     return _calculate_discount(price, tier)
+
+ def test_tiered_discounts():
+     assert process_purchase(100, False, 0) == 100
+     assert process_purchase(100, True, 3) == 90   # silver
+-    if TEST_GOLD:
+-        assert process_purchase(100, True, 5) == 80   # gold
++    assert process_purchase(100, True, 5) == 80   # gold
 ```
 
 Tests stay green.
