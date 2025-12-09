@@ -35,7 +35,7 @@ This pattern allows you to write the implementation first (Drafting) to figure o
 
 This techinque is really just expanding on [TDD's three laws](http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd). We clarify that drafting and experimentation isn't "writing code" in a way that would matter to TDD.
 
-*Note: Kent Beck's original TDD formulation emphasizes listing tests upfront but cautions against sketching implementation too early: "If you need an implementation sketch in Sharpie on a napkin, go ahead, but you might not really need it." That's valuable advice—but when you're stuck, drafting the implementation is often the quickest way to break through test paralysis. Don't let his advice push you towards abandoning TDD altogether. See [Canon TDD](https://tidyfirst.substack.com/p/canon-tdd).*
+*Note: Kent Beck's original TDD formulation emphasizes listing tests upfront but cautions against sketching implementation too early: "If you need an implementation sketch in Sharpie on a napkin, go ahead, but you might not really need it." That's valuable advice, but when you're stuck, drafting the implementation is often the quickest way to break through test paralysis. Don't let his advice push you towards abandoning TDD altogether. See [Canon TDD](https://tidyfirst.substack.com/p/canon-tdd).*
 
 ## When to Use This
 
