@@ -90,7 +90,7 @@ Thinking of all new behavior as fixes keeps you honest: if you don't have an exa
    - **State III** (fix off, test on, must be red): Objective: confirm the test detects missing behavior. You can build test code here until the test fails as expected. If you change the test, re-verify State IV.
    - **State IV** (both on, must be green): Objective: confirm the fix satisfies the test. Adjust the test and fix here until tests pass. If you change the test, re-verify State III.
 
-   You only re-verify a state if you've changed what it depends on since it was last verified: State II depends on the fix, State III depends on the test, State IV depends on both.
+   You only re-verify a state if you've changed what it depends on.
 
 5. **Remove the scaffolding**
     - If you used flags, bake them in and simplify.
