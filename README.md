@@ -164,7 +164,18 @@ Build up the fix — just enough to not crash:
      assert False
 ```
 
-Run it. The test no longer crashes. But check State III—comment out the fix and the test still passes. The test isn't verifying behavior yet.
+Run it. The test no longer crashes. Now go back to State III:
+
+```diff
+ def calculate_discount(price, is_member):
+-    if not is_member:
+-        return price
++    # if not is_member:
++    #     return price
+     assert False
+```
+
+The test still passes. The test isn't verifying behavior yet.
 
 Expand the test:
 
@@ -226,7 +237,17 @@ Build up the fix:
 +    return price * 0.9
 ```
 
-Run it. Passes. But check State III—comment out the fix and the test still passes. The test isn't verifying behavior yet.
+Run it. Passes. Now go back to State III:
+
+```diff
+ def calculate_discount(price, is_member):
+     if not is_member:
+         return price
+-    return price * 0.9
++    # return price * 0.9
+```
+
+The test still passes. The test isn't verifying behavior yet.
 
 Expand the test:
 
@@ -339,7 +360,13 @@ Build up the fix:
      assert False
 ```
 
-Set `FIX_ON = True`. Run it — no crash. But check State III—set `FIX_ON = False` and the test still passes. The test isn't verifying behavior yet.
+Set `FIX_ON = True`. Run it — no crash. Now go back to State III:
+
+```python
+FIX_ON = False
+```
+
+The test still passes. The test isn't verifying behavior yet.
 
 Expand the test:
 
@@ -390,7 +417,13 @@ Build up the fix:
      assert False
 ```
 
-Set `FIX_ON = True`. Run it — no crash. But check State III—set `FIX_ON = False` and the test still passes. The test isn't verifying behavior yet.
+Set `FIX_ON = True`. Run it — no crash. Now go back to State III:
+
+```python
+FIX_ON = False
+```
+
+The test still passes. The test isn't verifying behavior yet.
 
 Expand the test:
 
