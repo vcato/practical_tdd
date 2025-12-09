@@ -191,37 +191,41 @@ Look at the draft. "If a member, take 10% off" — next path.
 **Enter State III.** Objective: make the test fail.
 
 Add to the test — just enough to hit the assert:
-```python
-def test_calculate_discount():
-    assert calculate_discount(100, False) == 100  # already verified
-    calculate_discount(100, True)
+
+```diff
+ def test_calculate_discount():
+     assert calculate_discount(100, False) == 100
++    calculate_discount(100, True)
 ```
 
-Run it. Crashes on `assert False`. State III objective met — you're exercising the member path and it fails without the fix.
+Run it. Crashes on `assert False`. State III objective met.
 
 **Enter State IV.** Objective: make the test pass.
 
 Build up the fix:
-```python
-def calculate_discount(price, is_member):
-    if not is_member:
-        return price
-    return price * 0.9
+
+```diff
+ def calculate_discount(price, is_member):
+     if not is_member:
+         return price
+-    assert False
++    return price * 0.9
 ```
 
 Expand the test:
-```python
-def test_calculate_discount():
-    assert calculate_discount(100, False) == 100
-    assert calculate_discount(100, True) == 90
+
+```diff
+ def test_calculate_discount():
+     assert calculate_discount(100, False) == 100
+-    calculate_discount(100, True)
++    assert calculate_discount(100, True) == 90
 ```
 
 Run it. Passes. State IV objective met.
 
-**Verify all 4 states** using comments as the activation mechanism:
+**Verify State III**: Revert the fix (`return price * 0.9` → `assert False`), run test. Crashes on second assertion. ✓
 
-- **State III**: Replace `return price * 0.9` with `assert False`, run test. Test crashes on second assertion. ✓
-- **State IV**: Restore `return price * 0.9`. Test passes. ✓
+**Verify State IV**: Restore the fix. Test passes. ✓
 
 Second path verified.
 
