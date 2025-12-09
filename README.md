@@ -144,45 +144,59 @@ Look at your draft. "If not a member, just return the price" — that's a path y
 **Enter State III** (fix off, test on). Objective: make the test fail.
 
 Build up the test — just enough to hit the assert:
-```python
-def test_calculate_discount():
-    calculate_discount(100, False)
+
+```diff
+ def test_calculate_discount():
+-    pass
++    calculate_discount(100, False)
 ```
 
-Run it. It crashes on `assert False`. State III objective met — the test fails without the fix. This also confirms your test is reaching the path you intend to implement.
+Run it. Crashes on `assert False`. State III objective met.
 
 **Enter State IV** (fix on, test on). Objective: make the test pass.
 
 Build up the fix — just enough to not crash:
-```python
-def calculate_discount(price, is_member):
-    if not is_member:
-        return price
-    assert False
+
+```diff
+ def calculate_discount(price, is_member):
++    if not is_member:
++        return price
+     assert False
 ```
 
 Run it. The test no longer crashes. But we need to verify the actual behavior.
 
 Expand the test:
-```python
-def test_calculate_discount():
-    assert calculate_discount(100, False) == 100
+
+```diff
+ def test_calculate_discount():
+-    calculate_discount(100, False)
++    assert calculate_discount(100, False) == 100
 ```
 
-**Re-enter State III** (fix off, test on). Comment out the fix and verify the expanded test fails without it.
+**Verify State III**: Comment out the fix. Fails.
 
-```python
-def calculate_discount(price, is_member):
-    # if not is_member:
-    #     return price
-    assert False
+```diff
+ def calculate_discount(price, is_member):
+-    if not is_member:
+-        return price
++    # if not is_member:
++    #     return price
+     assert False
 ```
 
-Run it. It hits `assert False`. State III still holds — the test fails without the fix.
+**Verify State IV**: Restore the fix. Test passes. ✓
 
-**Return to State IV** (fix on, test on). Uncomment the fix. Run it. Passes. State IV objective met.
+```diff
+ def calculate_discount(price, is_member):
+-    # if not is_member:
+-    #     return price
++    if not is_member:
++        return price
+     assert False
+```
 
-Now we've verified all 4 states with the same test/fix pair. There is no scaffolding to remove at this point, so we are done with this pair. State II was implicitly verified when State IV was verified. State I is trivially verified.
+All 4 states verified. State II was implicitly verified when State IV was verified. State I is trivially verified.
 
 ### 3. Second Test/Fix Pair: Member path
 
@@ -223,9 +237,25 @@ Expand the test:
 
 Run it. Passes. State IV objective met.
 
-**Verify State III**: Revert the fix (`return price * 0.9` → `assert False`), run test. Crashes on second assertion. ✓
+**Verify State III**: Comment out the fix, run test. Fails
+
+```diff
+ def calculate_discount(price, is_member):
+     if not is_member:
+         return price
+-    return price * 0.9
++    # return price * 0.9
+```
 
 **Verify State IV**: Restore the fix. Test passes. ✓
+
+```diff
+ def calculate_discount(price, is_member):
+     if not is_member:
+         return price
+-    # return price * 0.9
++    return price * 0.9
+```
 
 Second path verified.
 
@@ -287,10 +317,11 @@ def test_tiers():
 
 Build up the test — just enough to hit the assert:
 
-```python
-def test_tiers():
-    if TEST_ON:
-        get_tier(False)
+```diff
+ def test_tiers():
+-    pass
++    if TEST_ON:
++        get_tier(False)
 ```
 
 Set `TEST_ON = True`. Run it — crashes on `assert False`. State III objective met.
@@ -299,28 +330,27 @@ Set `TEST_ON = True`. Run it — crashes on `assert False`. State III objective 
 
 Build up the fix:
 
-```python
-def get_tier(is_member):
-    if FIX_ON and not is_member:
-        return None
-    assert False
+```diff
+ def get_tier(is_member):
++    if FIX_ON and not is_member:
++        return None
+     assert False
 ```
 
 Set `FIX_ON = True`. Run it — no crash.
 
 Expand the test:
 
-```python
-def test_tiers():
-    if TEST_ON:
-        assert get_tier(False) is None
+```diff
+ def test_tiers():
+     if TEST_ON:
+-        get_tier(False)
++        assert get_tier(False) is None
 ```
 
-**Re-enter State III** (FIX_ON = False, TEST_ON = True). Set `FIX_ON = False` and verify the expanded test fails without the fix.
+**Verify State III**: Set `FIX_ON = False`. Fails.
 
-Run it. It hits `assert False`. State III still holds — the test fails without the fix.
-
-**Return to State IV** (FIX_ON = True, TEST_ON = True). Set `FIX_ON = True`. Run it. Passes. State IV objective met.
+**Verify State IV**: Set `FIX_ON = True`. Passes. ✓
 
 **Verify all 4 states** by flipping flags:
 - State I: Both False → Green ✓
@@ -336,11 +366,11 @@ Reset flags for the new pair: `FIX_ON = False`, `TEST_ON = False`.
 
 Add to the test — just enough to hit the assert:
 
-```python
-def test_tiers():
-    assert get_tier(False) is None  # already verified
-    if TEST_ON:
-        get_tier(True)
+```diff
+ def test_tiers():
+     assert get_tier(False) is None
++    if TEST_ON:
++        get_tier(True)
 ```
 
 Set `TEST_ON = True`. Run it — crashes on `assert False`. State III objective met.
@@ -349,31 +379,30 @@ Set `TEST_ON = True`. Run it — crashes on `assert False`. State III objective 
 
 Build up the fix:
 
-```python
-def get_tier(is_member):
-    if FIX_ON and is_member:
-        return "silver"
-    if not is_member:
-        return None
-    assert False
+```diff
+ def get_tier(is_member):
++    if FIX_ON and is_member:
++        return "silver"
+     if not is_member:
+         return None
+     assert False
 ```
 
 Set `FIX_ON = True`. Run it — no crash.
 
 Expand the test:
 
-```python
-def test_tiers():
-    assert get_tier(False) is None
-    if TEST_ON:
-        assert get_tier(True) == "silver"
+```diff
+ def test_tiers():
+     assert get_tier(False) is None
+     if TEST_ON:
+-        get_tier(True)
++        assert get_tier(True) == "silver"
 ```
 
-**Re-enter State III** (FIX_ON = False, TEST_ON = True). Set `FIX_ON = False` and verify the expanded test fails without the fix.
+**Verify State III**: Set `FIX_ON = False`. Fails.
 
-Run it. It hits `assert False`. State III still holds — the test fails without the fix.
-
-**Return to State IV** (FIX_ON = True, TEST_ON = True). Set `FIX_ON = True`. Run it. Passes. State IV objective met.
+**Verify State IV**: Set `FIX_ON = True`. Passes. ✓
 
 **Verify all 4 states** by flipping flags:
 - State I: Both False → Green ✓
